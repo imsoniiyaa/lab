@@ -1,6 +1,7 @@
 include("LLRSVD.jl")
 include("todense.jl")
 include("toelem.jl")
+include("truncate.jl")
 
 using .LLRSVDModule
 using .ToDenseModule
