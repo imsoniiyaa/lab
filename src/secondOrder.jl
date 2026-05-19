@@ -10,7 +10,7 @@ function D(N,h)
             end
         end
     end
-
+    
     return p
 end
 

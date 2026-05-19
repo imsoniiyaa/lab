@@ -1,0 +1,410 @@
+\documentclass[11pt]{article}
+
+% ---------------------------------------------------------
+% Packages
+% ---------------------------------------------------------
+\usepackage[a4paper, margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{physics}
+\usepackage{bm}
+\usepackage{listings}
+\usepackage{xcolor}
+
+
+% ---------------------------------------------------------
+% Code block style
+% ---------------------------------------------------------
+\lstset{
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{gray},
+    stringstyle=\color{orange},
+    breaklines=true,
+    columns=fullflexible
+}
+
+% ---------------------------------------------------------
+% indentation
+% ---------------------------------------------------------
+\setlength{\parindent}{0pt}
+
+
+% ---------------------------------------------------------
+% Hyperlink setup
+% ---------------------------------------------------------
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    citecolor=blue
+}
+
+% ---------------------------------------------------------
+% Title
+% ---------------------------------------------------------
+\title{
+    \vspace{-1cm}
+    \textbf{Lab 1 Report}\\
+    \vspace{0.2cm}
+    Summer 2026
+}
+\author{
+    Soeun Jang \\
+    Virginia Tech \\
+    \texttt{sophiaj04@vt.edu}
+}
+\date{\today}
+
+% ---------------------------------------------------------
+% Document
+% ---------------------------------------------------------
+\begin{document}
+
+\maketitle
+\newpage   
+
+\tableofcontents
+\newpage   
+
+% ---------------------------------------------------------
+\section*{Introduction}
+\addcontentsline{toc}{section}{Introduction}
+% ---------------------------------------------------------
+
+In this lab, we focus on representing matrices in low-rank form when solving PDEs. 
+Using truncated SVD significantly reduces memory usage and computational cost. The goal of this lab is to study how the rank evolves over time and how different truncation strategies, together with Taylor-series time stepping and the LLRSVD structure, affect the accuracy and efficiency of the solution.
+
+
+% ---------------------------------------------------------
+\section*{Part 1: The LLRSVD and Truncation}
+\addcontentsline{toc}{section}{Part 1: The LLRSVD and Truncation}
+% ---------------------------------------------------------
+
+\subsection*{Exercise 1}
+\textbf{1}.Defining the following mutable structure in Julia:
+\begin{lstlisting}
+mutable struct LLRSVD
+    U::Matrix{Float64}
+    S::Vector{Float64}
+    V::Matrix{Float64}
+    m::Int
+    n::Int
+    r::Int
+end
+\end{lstlisting}
+
+In this exercise, we define a mutable structure called \textbf{LLRSVD} that stores a matrix in low-rank SVD form. 
+The structure contains the left singular vectors \textbf{U}, the singular values \textbf{S}, and the right singular vectors \textbf{V}. 
+The fields \textbf{m},\textbf{n} and \textbf{r} keep track of the original matrix dimensions and the current rank of the low-rank representation.
+
+\vspace{1.5em}
+
+\textbf{2}. Convenience Constructor
+
+\begin{lstlisting}
+function LLRSVD(U::Matrix{Float64}, S::Vector{Float64}, V::Matrix{Float64})
+    m, r1 = size(U)
+    r2 = length(S)
+    n, r3 = size(V)
+    @assert r1 == r2 == r3
+    return LLRSVD(U, S, V, m, n, r1)
+end
+\end{lstlisting}
+
+This constructor builds an LLRSVD object directly from pre-computed SVD factors. For the SVD to be valid, the ranks inferred from U, S, and V (r1, r2, r3) must all be equal. After asserting this consistency, the constructor automatically infers the dimensions m, n, and the rank r, and then returns a properly structured LLRSVD object.
+
+\vspace{1.5em}
+
+\textbf{3}. Constructor W
+
+\begin{lstlisting}
+function LLRSVD(W::Matrix{Float64}, TOL::Float64)
+    F = svd(W)
+    U, S, V = F.U, F.S, F.V
+    s1 = S[1]
+    keep = findall(s -> s >= TOL * s1, S)
+
+    if isempty(keep)
+        keep = [1]
+    end
+
+    return LLRSVD(U[:, keep], S[keep], V[:, keep],
+                  size(W,1), size(W,2), length(keep))
+end
+\end{lstlisting}
+
+In Julia, the SVD of a matrix W is returned in the form 
+$W = U \cdot \mathrm{diag}(S) \cdot V^T$.  Since the LLRSVD structure stores the factors as U, S, and V, we would need to convert the transpose of V back to V by taking another transpose. Using the structured form F = svd(W) avoids this problem of the code because F.V already gives the correct V without requiring any additional transposes. This helps the constructor to be more clear and reduce confusion.
+
+\vspace{1.5em}
+
+\textbf{4}. todense 
+
+\begin{lstlisting}
+module ToDenseModule
+
+using LinearAlgebra
+import ..LLRSVDModule: LLRSVD
+
+export todense
+
+function todense(A::LLRSVD)::Matrix{Float64}
+    return A.U * Diagonal(A.S) * A.V'
+end
+
+end 
+
+\end{lstlisting}
+
+The todense function reconstructs the full matrix from its low-rank SVD stored in LLRSVD. Since the structure already contains U,S, and V, the dense matrix can be computed simply by multiplying those components.
+
+\vspace{1.5em}
+
+\textbf{5}. toelem
+
+\begin{lstlisting}
+module ToElemModule
+
+import ..LLRSVDModule: LLRSVD
+
+export toelem
+
+function toelem(A::LLRSVD, i::Int, j::Int)::Float64
+    return dot(A.U[i, :], A.S .* A.V[j, :])
+end
+
+end
+\end{lstlisting}
+
+The toelem function reconstructs $A(i,j)$ from the stored low-rank SVD. Since $A \approx USV^T$, the entry of i and j can be written as a dot product between the $i$th row of U and the vector with $k$th entry for S and V. This leads to the implementation of \textbf{dot(A.U[i, :], A.S .* A.V[j, :])}.
+\vspace{1.5em}
+
+\textbf{6}.Verification
+
+What we need to verify is for a random 30 $\times$ 20 matrix 
+
+\[
+\| W - \text{todense}(\text{LLRSVD}(W, 0.0)) \| < 10^{-12}.
+\]
+
+
+
+\begin{lstlisting}
+using Test
+using LinearAlgebra
+include("../src/LLRSVD.jl")
+include("../src/todense.jl")
+
+using .LLRSVDModule: LLRSVD
+using .ToDenseModule: todense
+
+@testset "LLRSVD Exercise 1" begin
+    W = randn(30, 20)
+    A = LLRSVD(W, 0.0)
+    err = norm(W - todense(A))
+    @test err < 1e-12
+end
+\end{lstlisting}
+
+The implementation of the \texttt{LLRSVD} data structure and its associated
+functions was validated through a reconstruction test on a random matrix.
+Using the \texttt{todense} function, we obtained a reconstruction error of
+approximately $4.145 \times 10^{-14}$, which indicates that the low-rank SVD
+representation was implemented correctly and reproduces the original matrix to
+machine precision. The test returned \texttt{true}, confirming that our
+constructor behaves as expected and that the LLRSVD framework is functioning
+properly.
+
+\subsection*{Exercise 2}
+
+\textbf{1}. Implement truncation
+
+\begin{lstlisting}
+function truncate(A::LLRSVD, TOL::Float64)::LLRSVD
+    S = A.S
+    t = sum(S.^2)
+    k = 0.0
+    r = 0
+
+    for i in 1:length(S)
+        k += S[i]^2
+        tail = t - k
+        if tail <= TOL
+            r = i
+            break
+        end
+    end
+
+    if r == 0
+        r = length(S)
+    end
+
+    return LLRSVD(A.U[:,1:r], A.S[1:r], A.V[:,1:r], A.m, A.n, r)
+end
+\end{lstlisting}
+
+By implementing Frobenius-norm truncation, we use that the squared norm of the error is 
+\[
+\|A - A_r\|_F^2 = \sum_{i=r+1}^n \sigma_i^2.
+\]
+The smallest rank $r$ is chosen so that the tail energy 
+$\sum_{i=r+1}^n \sigma_i^2$ is less than or equal to the tolerance TOL. 
+The algorithm accumulates the squared singular values until this condition 
+is met and returns the corresponding low-rank LLRSVD approximation.
+
+\vspace{1.5em}
+
+\textbf{2}. Verification
+\begin{lstlisting}
+using Test
+using LinearAlgebra
+include("../src/LLRSVD.jl")
+include("../src/todense.jl")
+include("../src/toelem.jl")
+
+using .LLRSVDModule: LLRSVD, truncate
+using .ToDenseModule: todense
+
+@testset "Exercise 2: Truncation Verification" begin
+    W = randn(50, 40)
+    A = LLRSVD(W, 0.0)
+
+    tols = [1e-1, 1e-3, 1e-6, 1e-10]
+
+    for TOL in tols
+        A2 = LLRSVDModule.truncate(A, TOL)
+        err = norm(todense(A) - todense(A2))
+        @test err <= TOL
+    end
+end
+\end{lstlisting}
+
+For this verification, a random matrix was generated using
+\texttt{randn}. The singular values of this matrix remained relatively
+large, so the truncation procedure retained essentially all singular
+values. As a result, the truncated matrix was identical to the original
+LLRSVD representation, producing zero reconstruction error for all
+tested tolerances. This outcome confirms that the truncation function correctly preserves the
+original matrix when the tolerance is sufficiently small, validating the implementation of the truncation algorithm.
+
+
+\vspace{1.5em}
+\textbf{3}. The reason why the loop must terminate with r is equal or greater than 1 for any TOL that is greater than 0.
+\vspace{1.5em}
+Since the singular values are greater than 0 and ordered decreasingly, the truncation algorithm always keeps at least the largest singular value. If all singular values are removed, the truncation error would be equal to the Frobenius norm of the original matrix which is not satisfying the small positive tolerance. Therefore, for any $TOL > 0$, the algorithm must terminate
+with $r \geq 1$.
+
+% ---------------------------------------------------------
+\section*{Part 2: Taylor Series and Truncation Tolerances}
+\addcontentsline{toc}{section}{Part 2: Taylor Series and Truncation Tolerances}
+% ---------------------------------------------------------
+\subsection*{Exercise 3}
+\textbf{1}. Construct grid vectors
+
+\begin{lstlisting}
+function grid()
+    m = 64
+    n = 64
+
+    x = range(0, 2*pi, length=m+1)[1:end-1]
+    y = range(0, 2*pi, length=n+1)[1:end-1]
+
+    u_x = sin.(x)
+    u_y = sin.(y)
+
+    W0 = u_x * u_y'
+
+    return x, y, W0
+end
+
+\end{lstlisting}
+The initial condition is defined as
+\[
+u_0(x,y) = \sin(x)\sin(y),
+\]
+that leads to a separable representaion, which means that the initial matrix can be written as an outer product.
+\[
+W^{(0)} = \sin(x)\sin(y)^T,
+\]
+which indicates that W contains the rank 1.
+
+\vspace{1.5em}
+\textbf{2}. Second-order centered finite difference Matrices
+
+\begin{lstlisting}
+function D(N,h)
+    L = N * h
+    scale = 2*pi / L
+    p = zeros(Float64, N, N)
+
+    for i in 1:N
+        for j in 1:N
+            if i != j
+                p[i, j] = 0.5 * (-1)^(i - j) * cot(pi * (i - j) / N) * scale
+            end
+        end
+    end
+
+    return p
+end
+
+function diff(x, y)
+    Dx = D(length(x), step(x))
+    Dy = D(length(y), step(y))
+    return Dx, Dy
+end
+
+\end{lstlisting}
+
+We construct the discrete first derivative operators $D_x$ and $D_y$ using second order centered finite difference matrices on a periodic grid. 
+The first derivative is
+\[
+(Du)_i = \frac{u_{i+1} - u_{i-1}}{2h},
+\]
+which is second order. These matrices provide second order approximations or x and y for periodic functions.
+
+\textbf{3}. Verification
+
+\begin{lstlisting}
+using Test
+using LinearAlgebra
+
+include("../src/grid.jl")
+include("../src/secondOrder.jl")
+@testset "Exercise 3 — Finite Difference Verification" begin
+  x, y, W0 = grid()
+  Dx, Dy = diff(x, y)
+
+  Wx_num = Dx * W0
+  Wy_num = W0 * Dy'
+
+  Wx_exact = cos.(x) * sin.(y)'
+  Wy_exact = sin.(x) * cos.(y)'
+
+  R = Wx_num + Wy_num - Wx_exact - Wy_exact
+
+  err_F = norm(R)
+
+  @test err_F < 1e-10
+end
+\end{lstlisting}
+
+To confirm that the $D_x$ and $D_y$ are implemented well, we are using numerical derivatives of W from its initial condition. We brought out its exact derivatives for each x and y and computed the Frobenius norm of the difference between numerical and exact derivation. It passed the test, which means its norm is extremely small. 
+
+
+% ---------------------------------------------------------
+\section*{Conclusion}
+\addcontentsline{toc}{section}{Conclusion}
+% ---------------------------------------------------------
+
+
+\end{document}

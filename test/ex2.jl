@@ -12,7 +12,7 @@ using .ToDenseModule: todense
     A = LLRSVD(W, 0.0)
 
     tols = [1e-1, 1e-3, 1e-6, 1e-10]
-
+    
     for TOL in tols
         A2 = LLRSVDModule.truncate(A, TOL)
         err = norm(todense(A) - todense(A2))
