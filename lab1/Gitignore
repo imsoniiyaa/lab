@@ -1,0 +1,17 @@
+# LaTeX
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+
+# Julia
+*.jl.cov
+*.jl.mem
+Manifest.toml
+
+# VSCode
+.vscode/
+
+# Results
+results/
