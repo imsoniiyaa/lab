@@ -51,3 +51,51 @@ end
 
     global TK_NORMS = norms
 end
+
+@testset "Exercise 4-3" begin
+    x, y, W0 = grid()
+    Dx, Dy = diff(x, y)
+    dense(W, Dx, Dy) = Dx * W + W * Dy'
+
+    Wk = [W0]
+    for k in 1:7
+        push!(Wk, dense(Wk[end], Dx, Dy))
+    end
+
+    dt = 0.1
+    p = 7
+    Wref = [ sin(x[i] - dt) * sin(y[j] - dt) for i in 1:length(x), j in 1:length(y) ]
+
+
+    alphas = [0.0, 1e-3, 1e-2, 1e-1, 1.0, 10.0]
+    results = Dict{Float64,Float64}()
+
+    for alpha in alphas
+        Tk_trunc = []
+        for k in 0:p
+            Tk = (dt^k / factorial(k)) * Wk[k+1]
+            U, S, V = svd(Tk)
+            if alpha == 0.0
+                r = length(S)
+            else
+                tol = alpha * dt^(p+1-k)
+                r = sum(S .> tol)
+                if r == 0
+                    r = 1
+                end
+            end
+            push!(Tk_trunc, U[:,1:r] * Diagonal(S[1:r]) * V[:,1:r]')
+        end
+
+        W_TS = sum(Tk_trunc)
+        err = norm(vec(W_TS - Wref))
+        println("alpha=", alpha, "  err=", err)
+        results[alpha] = err
+    end
+
+    global ERR_43 = results
+    
+    minerr = minimum(values(results))
+    @show minerr
+    @test minerr < 10.0
+end
