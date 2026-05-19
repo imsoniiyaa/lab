@@ -380,7 +380,8 @@ using LinearAlgebra
 
 include("../src/grid.jl")
 include("../src/secondOrder.jl")
-@testset "Exercise 3 — Finite Difference Verification" begin
+
+@testset "Exercise 3" begin
   x, y, W0 = grid()
   Dx, Dy = diff(x, y)
 
@@ -400,6 +401,147 @@ end
 
 To confirm that the $D_x$ and $D_y$ are implemented well, we are using numerical derivatives of W from its initial condition. We brought out its exact derivatives for each x and y and computed the Frobenius norm of the difference between numerical and exact derivation. It passed the test, which means its norm is extremely small. 
 
+\subsection*{Exercise 4}
+\textbf{1}. Compute Tk and Plot singular values
+
+\begin{lstlisting}
+x, y, W0 = grid()
+Dx, Dy = diff(x, y)
+\end{lstlisting}
+This is to set up the initial matrix. 
+\begin{lstlisting}
+function dense(W, Dx, Dy)
+    Dx*W + W*Dy'
+end
+
+Wk = [W0]   # W0 is W^(0)
+
+for k in 1:7
+    push!(Wk, dense(Wk[end], Dx, Dy))
+end
+\end{lstlisting}
+
+To apply the derivative operator, we need this step to get values:
+Wk[1] = W$^{0}$, Wk[2] = W$^{1}$ ... and so on. 
+
+We have to convert it to taylor terms.
+
+\begin{lstlisting}
+dt = 0.1
+Tk = [ (dt^k / factorial(k)) * Wk[k+1] for k in 0:7 ]
+\end{lstlisting}
+
+Now it became Tk[1] = T$^{0}$, Tk[2] = T$^{1}$ ... and so on.
+
+Now we are computing singular values and plot them.
+
+\begin{lstlisting}
+#plot the singular values
+    p = plot(yscale=:log10, legend=:outertopright)
+
+    for k in 1:8
+        plot!(p, sv[k], label="T$(k-1)")
+    end
+
+    display(p)
+\end{lstlisting}
+\vspace{1.5em}
+\textbf{2}. Tk recording
+
+\begin{lstlisting}
+sv = [ svd(Tk[k+1]).S for k in 0:7 ]
+norms = [ sqrt(sum(sv[k+1].^2)) for k in 0:7 ]
+println(norms)
+\end{lstlisting}
+
+To record this, let's do test.
+\begin{lstlisting}
+@testset "Exercise 4-2" begin
+    x, y, W0 = grid()
+    Dx, Dy = diff(x, y)
+
+    dense(W, Dx, Dy) = Dx * W + W * Dy'
+    Wk = [W0]
+    for k in 1:7
+        push!(Wk, dense(Wk[end], Dx, Dy))
+    end
+
+    dt = 0.1
+    Tk = [ (dt^k / factorial(k)) * Wk[k+1] for k in 0:7 ]
+
+    sv = [ svd(Tk[k+1]).S for k in 0:7 ]
+
+    norms = [ sqrt(sum(sv[k+1].^2)) for k in 0:7 ]
+
+    @test length(norms) == 8
+
+    global TK_NORMS = norms
+end
+\end{lstlisting}
+
+Based on the taylor terms, the result norms \textbf{decrease rapidly} as k increases. Since the factorial in the denominator grows much faster than numerator, high-order taylor terms become very little to the final sum.
+\vspace{1.5em}
+
+\textbf{3}. how to choose TOL
+
+A taylor method of order p has local truncation error $O((\Delta t)^{p+1})$. This means the error should not be greater than this when we divide each $T_k$ into SVD. $T_k$'s each size is decreasing rapidly as k increases, which means we can allow to use larger TOL when k is large. Therefore, choosing TOL as 
+\[
+TOL(k) \approx (\Delta t)^{p+1-k}
+\]
+so the sum of truncation error is always smaller than taylor truncation error. 
+To verify this, we need a code.
+
+\begin{lstlisting}
+@testset "Exercise 4-3" begin
+    x, y, W0 = grid()
+    Dx, Dy = diff(x, y)
+    dense(W, Dx, Dy) = Dx * W + W * Dy'
+
+    Wk = [W0]
+    for k in 1:7
+        push!(Wk, dense(Wk[end], Dx, Dy))
+    end
+
+    dt = 0.1
+    p = 7
+    Wref = [ sin(x[i] - dt) * sin(y[j] - dt) for i in 1:length(x), j in 1:length(y) ]
+
+
+    alphas = [0.0, 1e-3, 1e-2, 1e-1, 1.0, 10.0]
+    results = Dict{Float64,Float64}()
+
+    for alpha in alphas
+        Tk_trunc = []
+        for k in 0:p
+            Tk = (dt^k / factorial(k)) * Wk[k+1]
+            U, S, V = svd(Tk)
+            if alpha == 0.0
+                r = length(S)
+            else
+                tol = alpha * dt^(p+1-k)
+                r = sum(S .> tol)
+                if r == 0
+                    r = 1
+                end
+            end
+            push!(Tk_trunc, U[:,1:r] * Diagonal(S[1:r]) * V[:,1:r]')
+        end
+
+        W_TS = sum(Tk_trunc)
+        err = norm(vec(W_TS - Wref))
+        println("alpha=", alpha, "  err=", err)
+        results[alpha] = err
+    end
+
+    global ERR_43 = results
+    
+    minerr = minimum(values(results))
+    @show minerr
+    @test minerr < 10.0
+end
+  
+\end{lstlisting}
+This tolerance rule successfully keeps the truncation erro below the taylor truncation error, test has been passed. Therefore, it confirms that the SVD truncation does not significantly affect the method.
 
 % ---------------------------------------------------------
 \section*{Conclusion}

@@ -94,7 +94,7 @@ end
     end
 
     global ERR_43 = results
-    
+
     minerr = minimum(values(results))
     @show minerr
     @test minerr < 10.0
