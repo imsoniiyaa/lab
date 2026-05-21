@@ -1,70 +1,87 @@
+using Test
 using LinearAlgebra
-include("src/LLRSVD.jl")
-using .LLRSVDModule
-include("src/trunc_sum.jl")
-include("src/applyL.jl")
-include("src/taylor_step.jl")
-println("Testing taylor_step implementation...")
+include("../src/LLRSVD.jl")
+using .LLRSVDModule: LLRSVD
+include("../src/trunc_sum.jl")
+include("../src/applyL.jl")
+include("../src/taylor_step.jl")
 
-# Create a simple matrix and convert to LLRSVD
-W0_dense = randn(10, 10)
-W0 = LLRSVD(W0_dense, 1e-10)
-
-# Create simple differential operators
-Dx = randn(10, 10) * 0.1
-Dy = randn(10, 10) * 0.1
-
-# Test parameters
-dt = 0.1
-p = 3
-tol = 1e-6
-
-# Test taylor_step with strategy A
-println("\nTesting taylor_step with strategy A (truncated)...")
-try
-    T_A = taylor_step(W0, Dx, Dy, dt, p, tol; strategy=:A)
-    println("✓ taylor_step(:A) executed successfully")
-    println("  - Number of terms: $(length(T_A))")
-    println("  - First term S shape: $(size(T_A[1].S))")
-    println("  - First term rank: $(T_A[1].r)")
-    println("  - Last term rank: $(T_A[end].r)")
+@testset "Taylor Step Implementation" begin
     
-    # Verify structure
-    for (i, term) in enumerate(T_A)
-        println("  Term $i: U $(size(term.U)), S $(size(term.S)), V $(size(term.V))")
+    W0_dense = randn(10, 10)
+    W0 = LLRSVD(W0_dense, 1e-10)
+    Dx = randn(10, 10) * 0.1
+    Dy = randn(10, 10) * 0.1
+    dt = 0.1
+    p = 3
+    tol = 1e-6
+
+    @testset "taylor_step with strategy A (truncated)" begin
+        T_A = taylor_step(W0, Dx, Dy, dt, p, tol; strategy=:A)
+        
+        @test isa(T_A, Vector{LLRSVD})
+        
+        @test length(T_A) == p + 1
+        for (i, term) in enumerate(T_A)
+            @test isa(term, LLRSVD)
+            @test size(term.U, 1) == W0.m
+            @test size(term.V, 1) == W0.n
+            @test term.r == length(term.S)
+        end
+        
+        @test size(T_A[1].U) == size(W0.U)
+        @test size(T_A[1].V) == size(W0.V)
     end
-catch e
-    println("✗ Error in taylor_step(:A): $e")
-end
 
-# Test taylor_step with strategy B
-println("\nTesting taylor_step with strategy B (untruncated)...")
-try
-    T_B = taylor_step(W0, Dx, Dy, dt, p, tol; strategy=:B)
-    println("✓ taylor_step(:B) executed successfully")
-    println("  - Number of terms: $(length(T_B))")
-    println("  - First term rank: $(T_B[1].r)")
-    println("  - Last term rank: $(T_B[end].r)")
-catch e
-    println("✗ Error in taylor_step(:B): $e")
-end
+    @testset "taylor_step with strategy B (untruncated)" begin
+        T_B = taylor_step(W0, Dx, Dy, dt, p, tol; strategy=:B)
+        
+        @test isa(T_B, Vector{LLRSVD})
+        @test length(T_B) == p + 1
+        
+        for (i, term) in enumerate(T_B)
+            @test isa(term, LLRSVD)
+            @test size(term.U, 1) == W0.m
+            @test size(term.V, 1) == W0.n
+        end
+    end
 
-# Test taylor_stepA directly
-println("\nTesting taylor_stepA directly...")
-try
-    T_A_direct = taylor_stepA(W0, Dx, Dy, dt, p, tol)
-    println("✓ taylor_stepA executed successfully")
-catch e
-    println("✗ Error in taylor_stepA: $e")
-end
+    @testset "taylor_stepA function" begin
+        T_A_direct = taylor_stepA(W0, Dx, Dy, dt, p, tol)
+        
+        @test isa(T_A_direct, Vector{LLRSVD})
+        @test length(T_A_direct) == p + 1
+        
+        T_A = taylor_step(W0, Dx, Dy, dt, p, tol; strategy=:A)
+        for i in 1:length(T_A_direct)
+            @test norm(T_A_direct[i].S - T_A[i].S) < 1e-14
+        end
+    end
 
-# Test taylor_stepB directly
-println("\nTesting taylor_stepB directly...")
-try
-    T_B_direct = taylor_stepB(W0, Dx, Dy, dt, p, tol)
-    println("✓ taylor_stepB executed successfully")
-catch e
-    println("✗ Error in taylor_stepB: $e")
-end
+    @testset "taylor_stepB function" begin
+        T_B_direct = taylor_stepB(W0, Dx, Dy, dt, p, tol)
+        
+        @test isa(T_B_direct, Vector{LLRSVD})
+        @test length(T_B_direct) == p + 1
+        
+        T_B = taylor_step(W0, Dx, Dy, dt, p, tol; strategy=:B)
+        for i in 1:length(T_B_direct)
+            @test norm(T_B_direct[i].S - T_B[i].S) < 1e-14
+        end
+    end
 
-println("\n✓ All tests completed!")
+    @testset "Scaling verification" begin
+        T = taylor_step(W0, Dx, Dy, dt, p, tol; strategy=:B)
+         @test norm(T[1].S - W0.S) < 1e-14
+        
+        
+        for i in 2:length(T)
+            expected_scale = dt^(i-1) / factorial(i-1)
+            @test expected_scale < 1.0  # Verify our assumption
+        end
+    end
+
+    @testset "Invalid strategy error" begin
+        @test_throws ArgumentError taylor_step(W0, Dx, Dy, dt, p, tol; strategy=:C)
+    end
+end
