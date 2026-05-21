@@ -90,6 +90,7 @@ Using truncated SVD significantly reduces memory usage and computational cost. T
 % ---------------------------------------------------------
 
 \subsection*{Exercise 1}
+\addcontentsline{toc}{subsection}{Exercise 1}
 \textbf{1}.Defining the following mutable structure in Julia:
 \begin{lstlisting}
 mutable struct LLRSVD
@@ -225,7 +226,7 @@ constructor behaves as expected and that the LLRSVD framework is functioning
 properly.
 
 \subsection*{Exercise 2}
-
+\addcontentsline{toc}{subsection}{Exercise 2}
 \textbf{1}. Implement truncation
 
 \begin{lstlisting}
@@ -308,6 +309,7 @@ with $r \geq 1$.
 \addcontentsline{toc}{section}{Part 2: Taylor Series and Truncation Tolerances}
 % ---------------------------------------------------------
 \subsection*{Exercise 3}
+\addcontentsline{toc}{subsection}{Exercise 3}
 \textbf{1}. Construct grid vectors
 
 \begin{lstlisting}
@@ -402,6 +404,7 @@ end
 To confirm that the $D_x$ and $D_y$ are implemented well, we are using numerical derivatives of W from its initial condition. We brought out its exact derivatives for each x and y and computed the Frobenius norm of the difference between numerical and exact derivation. It passed the test, which means its norm is extremely small. 
 
 \subsection*{Exercise 4}
+\addcontentsline{toc}{subsection}{Exercise 4}
 \textbf{1}. Compute Tk and Plot singular values
 
 \begin{lstlisting}
@@ -601,11 +604,352 @@ end
 
 This code returns the table with each k and the rank of the truncated Tk. The rank after truncation for k=0 and 7 is 1 and others are all 2. Thus, we can conclude that the effective rank of final sum is 2. This indicates that although each Taylor term has low rank individually, the entire solution still lies in a very low‑dimensional subspace, and the truncated Taylor method preserves this low‑rank structure.
 
-\section*{Part 3}
+\section*{Part 3: trunc\_sum: adding low-rank matrices}
+\addcontentsline{toc}{section}{Part 3: trunc\_sum: adding low-rank matrices}
 \subsection*{Exercise 5}
+\addcontentsline{toc}{subsection}{Exercise 5}
+\textbf{1}. truncation sum function
+
+\begin{lstlisting}
+function trunc_sum(terms::Vector{LLRSVD}, TOL::Float64)::LLRSVD
+    a = terms[1]
+    for i in 2:length(terms)
+        b = terms[i]
+        #Concatenate the matrices
+        u = [a.U b.U]
+        v = [a.V b.V]
+        s = Diagonal(vcat(a.S, b.S))
+        #QR decomposition
+        qu, ru = qr(u)
+        qv, rv = qr(v)
+        #Form the matrix to small
+        mat = ru * s * rv'
+        us, ss, vs = svd(mat)
+
+        r = sum(ss .> TOL)
+        r = max(r, 1)
+
+        a = LLRSVD(qu[:, 1:r] * us[:, 1:r], ss[1:r], qv[:, 1:r] * vs[:, 1:r], a.m, a.n, r)
+    end
+    return a
+end
+\end{lstlisting}
+
+The goal of this function is to add several low-rank matrices stored in LLRSVD format. We accmulate the sum into \textbf{a} and use for loop to add \textbf{b} into \textbf{a}. We use \textbf{a+b}  to build its sum of the ran, then make QR decomposition to make the function numerically stable. Lastly, making this SVD small sized and truncate by TOL. Based on this process, we can create new LLRSVD to be more efficient.  
+
+\vspace{1.5em}
+
+\textbf{2}. Verification
+
+\begin{lstlisting}
+using Test
+using LinearAlgebra
+
+include("../src/LLRSVD.jl")
+using .LLRSVDModule: LLRSVD
+include("../src/todense.jl")
+using .ToDenseModule: todense
+include("../src/trunc_sum.jl")
+
+@testset "Exercise 5 - TruncSum" begin
+    u1 = rand(3)
+    u2 = rand(3)
+    v1 = rand(2)
+    v2 = rand(2)
+    
+    denseA = u1 * v1'
+    denseB = u2 * v2'
+    denseC = denseA + denseB
+
+    a = LLRSVD(reshape(u1, 3, 1), [1.0], reshape(v1, 2, 1))
+    b = LLRSVD(reshape(u2, 3, 1), [1.0], reshape(v2, 2, 1))
+    c = trunc_sum([a, b], 1e-10)
+
+    C = todense(c)
+    @test norm(C - denseC) < 1e-10
+end
+\end{lstlisting}
+
+This function returns random rank 1 matrix with u1*v1 and u2*v2. Based on the verification condition, we are summing those two rank-1 matrices and this code returns pass from the test with valid LLRSVD shapes.
+
+\vspace{1.5em}
+
+\textbf{3}. How does the runtime of truncation sum scale with R? At what point does the thin-QR step dominate over the SVD step?
+
+\vspace{0.8em}
+
+The runtime of the truncation sum scales differently because two main operations contribute to the cost: the thin QR step and the small SVD step. First, the QR step requires approximately $r^2$ work.When the rank r increases, each new column must be orthogonalized against the previous r columns using inner products and subtraction. Since this process is repeated for all r columns, the total cost grows like, $ r \times r = r^2$. In contrast, the SVD step operates on a small $ 2r \times 2r$ matrix. The computational cost of performing an SVD on a square matrix of size k is $O(k^3)$, $k = 2r$ and the cost scales as $(2r)^3$ which is about $r^3$. As a result, when the rank r is small, the $r^3$ cost of the SVD is still relatively small, and the QR tends to dominate the runtime. However, as r becomes larger, the cubic growth of the SVD cost eventually overtakes the QR cost, making SVD the dominant contributor to the overall runtime.
+
+\section*{Part 4: Step-and-Truncate simulation}
+\addcontentsline{toc}{section}{Part 4: Step-and-Truncate simulation}
+\subsection*{Exercise 6}
+\addcontentsline{toc}{subsection}{Exercise 6}
+\begin{lstlisting}
+function applyL(W::LLRSVD, Dx, Dy, TOL::Float64)::LLRSVD
+    U = W.U
+    V = W.V
+    S = W.S
+    U1 = Dx * U
+    a = LLRSVD(U1, S, V)
+
+    V1 = Dy * V
+    b = LLRSVD(U, S, V1)
+
+    return trunc_sum([a, b], TOL)
+end
+
+\end{lstlisting}
+In this code implementation, I used $D_X$ as converting $U$, $D_y$ as converting $V$. Thus, it returns two different SVD matrices to sum as trunc\_sum function so we can obtain $L(W)$ as a final result.
+
+\vspace{1.5em}
+
+\textbf{2}. Verification
+
+\begin{lstlisting}
+using LinearAlgebra
+using Test
+
+include("../src/LLRSVD.jl")
+using .LLRSVDModule: LLRSVD
+include("../src/todense.jl")
+using .ToDenseModule: todense
+include("../src/trunc_sum.jl")
+include("../src/secondOrder.jl")
+include("../src/applyL.jl")
+
+@testset "Exercise 6: applyL" begin
+    m, n = 64, 64
+    x = range(0, 2*pi, length=m)
+    y = range(0, 2*pi, length=n)
+    W0_dense = sin.(x) * sin.(y)'
+
+    Dx, Dy = diff(x, y)
+
+    #LLRSVD from rank-1 factors
+    W0 = LLRSVD(reshape(sin.(x), m, 1), [1.0], reshape(sin.(y), n, 1))
+
+    #Dense reference
+    Wx_dense = Dx * W0_dense
+    Wy_dense = W0_dense * Dy'
+    L_dense = Wx_dense + Wy_dense
+
+    Low = applyL(W0, Dx, Dy, 1e-10)
+    Low_dense = todense(Low)
+
+    err = norm(L_dense - Low_dense)
+
+    @test err < 1e-10
+    println("Error: ", err)
+
+end
+\end{lstlisting}
+
+Error prints out as 4.6780504587972876e-14, this means it does pass the test which is way below 1e-10. In other words, after converting the low-rank result back to a dense matrix, the Frobenius norm error satisfies the condition. Therefore, it confirms that applyL function is implemented correctly.
+
+\subsection*{Exercise 7}
+\addcontentsline{toc}{subsection}{Exercise 7}
+\begin{lstlisting}
+function taylor_stepA(W::LLRSVD, Dx, Dy, dt, p, tol)
+    T = Vector{LLRSVD}(undef, p+1)
+    Wk = W
+    T[1] = LLRSVD(Wk.U, Wk.S * 1.0, Wk.V)
+
+    for i in 1:p
+        Wk = applyL(Wk, Dx, Dy, tol * dt^(-i))
+        Sk = Wk.S .* dt^i / factorial(i)
+        T[i+1] = LLRSVD(Wk.U, Sk, Wk.V)
+    end
+    return T
+end
+
+function taylor_stepB(W::LLRSVD, Dx, Dy, dt, p, tol)
+    T = Vector{LLRSVD}(undef, p+1)
+    Wk = W
+    W[1] = LLRSVD(Wk.U, Wk.S * 1.0, Wk.V)
+
+    for i in 1:p
+        Wk = applyL(Wk, Dx, Dy, 0.0)
+        Sk = Wk.S .* dt^i / factorial(i)
+        W[i+1] = LLRSVD(Wk.U, Sk, Wk.V)
+    end
+    return T
+end
+
+function taylor_step(W0::LLRSVD, Dx, Dy, dt, p, tol; strategy::Symbol=:A)
+    T = Vector{LLRSVD}(undef, p+1)
+    Wk = W0
+    T[1] = LLRSVD(Wk.U, Wk.S * 1.0, Wk.V)
+
+    for i in 1:p
+        if strategy == :A
+            Wk = applyL(Wk, Dx, Dy, tol * dt^(-i))
+        elseif strategy == :B
+            Wk = applyL(Wk, Dx, Dy, 0.0)
+        else
+            throw(ArgumentError("Invalid strategy. Use :A or :B."))
+        end
+        Sk = Wk.S .* dt^i / factorial(i)
+        T[i+1] = LLRSVD(Wk.U, Sk, Wk.V)
+    end
+    return T
+end
+
+\end{lstlisting}
+
+Since strategy A is truncating every terms and then sum, and strategy B is summing every terms first terms and truncate last. I made two functions separately and then made combined one at the end. 
+
+\vspace{0.8em}
+
+Strategy A computes each derivative and truncates it immediately, which keeps the computation stable by preventing rank growth, but it can be slower because truncation happens at every step.
+Strategy B computes all derivatives without truncation and only stores the final scaled terms. This is faster than Strategy A, but it risks large intermediate ranks and higher memory usage.
+
+\begin{lstlisting}
+using Test
+using LinearAlgebra
+include("../src/LLRSVD.jl")
+using .LLRSVDModule: LLRSVD
+include("../src/trunc_sum.jl")
+include("../src/applyL.jl")
+include("../src/taylor_step.jl")
+
+@testset "Taylor Step Implementation" begin
+    
+    W0_dense = randn(10, 10)
+    W0 = LLRSVD(W0_dense, 1e-10)
+    Dx = randn(10, 10) * 0.1
+    Dy = randn(10, 10) * 0.1
+    dt = 0.1
+    p = 3
+    tol = 1e-6
+
+    @testset "taylor_step with strategy A (truncated)" begin
+        T_A = taylor_step(W0, Dx, Dy, dt, p, tol; strategy=:A)
+        
+        @test isa(T_A, Vector{LLRSVD})
+        
+        @test length(T_A) == p + 1
+        for (i, term) in enumerate(T_A)
+            @test isa(term, LLRSVD)
+            @test size(term.U, 1) == W0.m
+            @test size(term.V, 1) == W0.n
+            @test term.r == length(term.S)
+        end
+        
+        @test size(T_A[1].U) == size(W0.U)
+        @test size(T_A[1].V) == size(W0.V)
+    end
+
+    @testset "taylor_step with strategy B (untruncated)" begin
+        T_B = taylor_step(W0, Dx, Dy, dt, p, tol; strategy=:B)
+        
+        @test isa(T_B, Vector{LLRSVD})
+        @test length(T_B) == p + 1
+        
+        for (i, term) in enumerate(T_B)
+            @test isa(term, LLRSVD)
+            @test size(term.U, 1) == W0.m
+            @test size(term.V, 1) == W0.n
+        end
+    end
+
+    @testset "taylor_stepA function" begin
+        T_A_direct = taylor_stepA(W0, Dx, Dy, dt, p, tol)
+        
+        @test isa(T_A_direct, Vector{LLRSVD})
+        @test length(T_A_direct) == p + 1
+        
+        T_A = taylor_step(W0, Dx, Dy, dt, p, tol; strategy=:A)
+        for i in 1:length(T_A_direct)
+            @test norm(T_A_direct[i].S - T_A[i].S) < 1e-14
+        end
+    end
+
+    @testset "taylor_stepB function" begin
+        T_B_direct = taylor_stepB(W0, Dx, Dy, dt, p, tol)
+        
+        @test isa(T_B_direct, Vector{LLRSVD})
+        @test length(T_B_direct) == p + 1
+        
+        T_B = taylor_step(W0, Dx, Dy, dt, p, tol; strategy=:B)
+        for i in 1:length(T_B_direct)
+            @test norm(T_B_direct[i].S - T_B[i].S) < 1e-14
+        end
+    end
+
+    @testset "Scaling verification" begin
+        T = taylor_step(W0, Dx, Dy, dt, p, tol; strategy=:B)
+         @test norm(T[1].S - W0.S) < 1e-14
+        
+        
+        for i in 2:length(T)
+            expected_scale = dt^(i-1) / factorial(i-1)
+            @test expected_scale < 1.0  # Verify our assumption
+        end
+    end
+
+    @testset "Invalid strategy error" begin
+        @test_throws ArgumentError taylor_step(W0, Dx, Dy, dt, p, tol; strategy=:C)
+    end
+end
+
+\end{lstlisting}
+
+Using this test to confirm if the function works well, all tests pass. To verify taylor\-step, and A,B implementations, I check both mathematical and structure accuracy. 
+
+\vspace{0.6em}
+
+Beginning of setting dense matrix W0, we convert it to an LLRSVD and set random $D_x, D_y$ as inputs. We verify that the output is Vector{LLRSVD} with its length $p+1$. Both strategies print out the valid LLRSVD taylor terms and unified one also works identically as the separate implementations. 
+
+\subsection*{Exercise 8}
+\addcontentsline{toc}{subsection}{Exercise 8}
+
+\textbf{1}.
+
+\vspace{1.5em}
+
+\textbf{2}.
+
+\vspace{1.5em}
+
+\textbf{3}.
+
+\vspace{1.5em}
+
+\textbf{4}.
+
+\vspace{1.5em}
+
+\textbf{5}.
+
+\section*{Part 5:Solid-body rotation with a Gaussian blob}
+\addcontentsline{toc}{section}
+{Part 5:Solid-body rotation with a Gaussian blob}
+
+\subsection*{Exercise 9}
+\addcontentsline{toc}{subsection}{Exercise 9}
+\textbf{1}.
+
+\vspace{1.5em}
+
+\textbf{2}.
+
+\subsection*{Exercise 10}
+\addcontentsline{toc}{subsection}{Exercise 10}
+\textbf{1}.
+
+\vspace{1.5em}
+
+\textbf{2}.
+
+\vspace{1.5em}
+
+\textbf{3}.
+
+
 % ---------------------------------------------------------
 \section*{Conclusion}
-\addcontentsline{toc}{section}{Conclusion}
+\addcontentsline{toc}{section}
+{Conclusion}
 % ---------------------------------------------------------
 
 
