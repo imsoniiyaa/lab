@@ -903,11 +903,123 @@ Beginning of setting dense matrix W0, we convert it to an LLRSVD and set random 
 \subsection*{Exercise 8}
 \addcontentsline{toc}{subsection}{Exercise 8}
 
-\textbf{1}.
+\textbf{1}. Implement Code
+
+\begin{lstlisting}
+function step_and_truncate(W0::LLRSVD, Dx, Dy, dt, p, tol; strategy=:A)
+    W = W0
+    TOL = dt^(p+1)
+    nt = Int(round(2*pi/dt))
+    for i in 1:nt
+        list = taylor_step(W, Dx, Dy, dt, p, tol; strategy=strategy)
+        W = trunc_sum(list, TOL)
+    end
+    return W
+end
+
+function step_and_truncateA(W0::LLRSVD, Dx, Dy, dt, p, tol)
+    return step_and_truncate(W0, Dx, Dy, dt, p, tol; strategy=:A)
+end
+
+function step_and_truncateB(W0::LLRSVD, Dx, Dy, dt, p, tol)
+    return step_and_truncate(W0, Dx, Dy, dt, p, tol; strategy=:B)
+end
+\end{lstlisting}
+
+Based on the main function, I created two other step\_and\_truncate function that is wrapping up strategy A and B. Summing the terms with truncation tolerance, the time loop runs for given steps until the final timeframe.
 
 \vspace{1.5em}
 
-\textbf{2}.
+\textbf{2}. Time loop
+
+\begin{lstlisting}
+function step_and_truncate(W0::LLRSVD, Dx, Dy, dt, p, tol; strategy=:A)
+    W = W0
+    TOL = dt^(p+1)
+    nt = Int(round(2*pi/dt))
+
+    ranks = zeros(Int, nt)
+    times = zeros(Float64, nt)
+
+    for i in 1:nt
+        list = taylor_step(W, Dx, Dy, dt, p, tol; strategy=strategy)
+        t0 = time_ns()
+        W = trunc_sum(list, TOL)
+        t1 = time_ns()
+
+        ranks[i] = W.r
+        times[i] = (t1 - t0) / 1e9
+    end
+    return W, times, ranks
+end
+\end{lstlisting}
+
+Based on the function from (1), I added time loop with time\_ns to measure trunc\_sum, and I let this divided with 1e9 to be able to convert as seconds. Also, I used rank of the updated LLRSVD which is after truncation step.
+
+\vspace{0.8em}
+
+To plot this function, we are using the code below.
+\begin{lstlisting}
+using LinearAlgebra
+include("../src/LLRSVD.jl")
+using .LLRSVDModule: LLRSVD
+include("../src/trunc_sum.jl")
+include("../src/applyL.jl")
+include("../src/taylor_step.jl")
+include("../src/time.jl")
+using Plots
+
+W0_dense = randn(10, 10)
+W0 = LLRSVD(W0_dense, 1e-10)
+Dx = randn(10, 10) * 0.1
+Dy = randn(10, 10) * 0.1
+
+dt = 0.1
+p = 3
+tol = 1e-6
+
+# Run both strategies and record rank/time at every step
+W_A, times_A, ranks_A = step_and_truncate(W0, Dx, Dy, dt, p, tol; strategy=:A)
+W_B, times_B, ranks_B = step_and_truncate(W0, Dx, Dy, dt, p, tol; strategy=:B)
+
+# Time grid
+t = (1:length(times_A)) .* dt
+
+# Plot 
+plot(
+    t, ranks_A,
+    label = "Strategy A",
+    xlabel = "Time",
+    ylabel = "Rank",
+    lw = 2,
+    title = "Rank vs Time"
+)
+plot!(
+    t, ranks_B,
+    label = "Strategy B",
+    lw = 2
+)
+
+# Plot cumulative truncation time
+cum_A = cumsum(times_A)
+cum_B = cumsum(times_B)
+plot(
+    t, cum_A,
+    label = "Strategy A",
+    xlabel = "Time",
+    ylabel = "Cumulative Time (s)",
+    lw = 2,
+    title = "Cumulative trunc_sum Time vs Time"
+)
+plot!(
+    t, cum_B,
+    label = "Strategy B",
+    lw = 2
+)
+
+\end{lstlisting}
+
+The plot shows that no matter what A is always greater than B as time gets longer. Since A takes longerf time since it truncates every terms, so insdie each taylor step, it performs p truncations. Thus, it is expensive compared to B since it uses much fewer SVDs. Overall, the gap between culmulative time of A and B keeps increasing since A does more work at every step.
 
 \vspace{1.5em}
 
