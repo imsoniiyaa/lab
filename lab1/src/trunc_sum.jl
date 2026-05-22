@@ -16,7 +16,7 @@ function trunc_sum(terms::Vector{LLRSVD}, TOL::Float64)::LLRSVD
         r = sum(ss .> TOL)
         r = max(r, 1)
 
-        a = LLRSVD(qu[:, 1:r] * us[:, 1:r], ss[1:r], qv[:, 1:r] * vs[:, 1:r], a.m, a.n, r)
+        a = LLRSVD(qu * us[:, 1:r], ss[1:r], qv * vs[:, 1:r], a.m, a.n, r)
     end
     return a
 end
