@@ -16,7 +16,7 @@ function D(N, L)
     for j in 1:N
         for k in 1:N
             if j != k
-                M[j,k] = 0.5 * (-1)^(j-k) / tan((x[j] - x[k]) * π / L)
+                M[j,k] = 0.5 * (-1)^(j-k) / tan((x[j] - x[k]) * pi / L)
             end
         end
     end

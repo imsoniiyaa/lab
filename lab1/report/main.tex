@@ -4,6 +4,7 @@
 % Packages
 % ---------------------------------------------------------
 \usepackage[a4paper, margin=1in]{geometry}
+\usepackage[utf8]{inputenc}
 \usepackage{amsmath, amssymb, amsthm}
 \usepackage{setspace}
 \usepackage{graphicx}
@@ -24,6 +25,8 @@
 % Code block style
 % ---------------------------------------------------------
 \lstset{
+    inputencoding=utf8,
+    extendedchars=true,
     basicstyle=\ttfamily\small,
     keywordstyle=\color{blue},
     commentstyle=\color{gray},
@@ -602,7 +605,7 @@ end
 
 \end{lstlisting}
 
-This code returns the table with each k and the rank of the truncated Tk. The rank after truncation for k=0 and 7 is 1 and others are all 2. Thus, we can conclude that the effective rank of final sum is 2. This indicates that although each Taylor term has low rank individually, the entire solution still lies in a very low‑dimensional subspace, and the truncated Taylor method preserves this low‑rank structure.
+This code returns the table with each k and the rank of the truncated Tk. The rank after truncation for k=0 and 7 is 1 and others are all 2. Thus, we can conclude that the effective rank of final sum is 2. This indicates that although each Taylor term has low rank individually, the entire solution still lies in a very low-dimensional subspace, and the truncated Taylor method preserves this low-rank structure.
 
 \section*{Part 3: trunc\_sum: adding low-rank matrices}
 \addcontentsline{toc}{section}{Part 3: trunc\_sum: adding low-rank matrices}
@@ -1093,7 +1096,7 @@ Dt_steps = Int(round(2*pi / 0.1))
 T = Dt_steps * 0.1
 
 Wref = begin
-    T = 2π
+    T = 2pi
     ex = exp(T * second_derivative_matrix(m))
     ey = exp(T * second_derivative_matrix(n))
     ex * W0_dense * ey'
@@ -1167,7 +1170,7 @@ for i in 1:2
 end
 \end{lstlisting}
 
-As a result, when dt = 0.2, 01, 0.05, the final error remains essentially the same and the observed convergence order is 0. Because this is a low‑rank approximation method, reducing the time step does not reduce the truncation error, so the total error stays constant and no dt convergence is observed.
+As a result, when dt = 0.2, 01, 0.05, the final error remains essentially the same and the observed convergence order is 0. Because this is a low-rank approximation method, reducing the time step does not reduce the truncation error, so the total error stays constant and no dt convergence is observed.
 
 \vspace{1.5em}
 
@@ -1345,7 +1348,7 @@ function D(N, L)
     for j in 1:N
         for k in 1:N
             if j != k
-                M[j,k] = 0.5 * (-1)^(j-k) / tan((x[j] - x[k]) * π / L)
+                M[j,k] = 0.5 * (-1)^(j-k) / tan((x[j] - x[k]) * pi / L)
             end
         end
     end
@@ -1379,7 +1382,7 @@ end
         err = h * norm(todense(WN) - u0)
         ratio = err / dt^p
 
-        @info "$dt → error = $err"
+        @info "$dt -> error = $err"
 
         if prev_ratio !== nothing
             @test abs(ratio - prev_ratio) / prev_ratio < 0.5
@@ -1419,7 +1422,7 @@ function D(N, L)
     M = zeros(Float64, N, N)
     for j in 1:N, k in 1:N
         if j != k
-            M[j,k] = 0.5 * (-1)^(j-k) / tan((x[j] - x[k]) * π / L)
+            M[j,k] = 0.5 * (-1)^(j-k) / tan((x[j] - x[k]) * pi / L)
         end
     end
     return (2*pi/L) * M
