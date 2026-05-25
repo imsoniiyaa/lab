@@ -10,7 +10,7 @@ function step_and_truncate_sbr(W0::LLRSVD, Dx, Dy, X, Y, dt, p, tol)
 
     for n in 1:N
         terms = taylor_step_sbr(W, Dx, Dy, X, Y, dt, p, tol)
-        W = trunc_sum(terms, dt^(p+1)) 
+        W = trunc_sum(terms, dt^(p+1))
     end
 
     return W

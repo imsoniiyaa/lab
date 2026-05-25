@@ -1,22 +1,26 @@
 function trunc_sum(terms::Vector{LLRSVD}, TOL::Float64)::LLRSVD
-    a = terms[1]
-    for i in 2:length(terms)
-        b = terms[i]
-        #Concatenate the matrices
-        u = [a.U b.U]
-        v = [a.V b.V]
-        s = Diagonal(vcat(a.S, b.S))
-        #QR decomposition
-        qu, ru = qr(u)
-        qv, rv = qr(v)
-        #Form the matrix to small
-        mat = ru * s * rv'
-        us, ss, vs = svd(mat)
-
-        r = sum(ss .> TOL)
-        r = max(r, 1)
-
-        a = LLRSVD(qu * us[:, 1:r], ss[1:r], qv * vs[:, 1:r], a.m, a.n, r)
+    if length(terms) == 1
+        return terms[1]
     end
-    return a
+
+    U_cat = hcat([t.U for t in terms]...)
+    V_cat = hcat([t.V for t in terms]...)
+    S_cat = vcat([t.S for t in terms]...)
+
+    qu, ru = qr(U_cat)
+    qv, rv = qr(V_cat)
+
+    mat = ru * Diagonal(S_cat) * rv'
+
+    if any(isnan, mat) || any(isinf, mat)
+        return terms[1]
+    end
+
+    us, ss, vs = svd(mat)
+
+    r = max(sum(ss .> TOL), 1)
+    m = terms[1].m
+    n = terms[1].n
+
+    return LLRSVD(Matrix(qu) * us[:, 1:r], ss[1:r], Matrix(qv) * vs[:, 1:r], m, n, r)
 end
