@@ -38,7 +38,7 @@ end
     W0 = LLRSVD(u0, 1e-12)
 
     h = step(x)
-    dts = [0.2, 0.1, 0.05]
+    dts = [0.05, 0.025, 0.0125]
     p = 3
     tol = 1e-12
     prev_ratio = nothing
