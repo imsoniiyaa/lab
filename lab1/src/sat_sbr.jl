@@ -5,7 +5,7 @@ include("applyL_sbr.jl")
 function step_and_truncate_sbr(W0::LLRSVD, Dx, Dy, X, Y, dt, p, tol)
     T = 2*pi
     N = round(Int, T/dt)
-
+    dt = T/N
     W = W0
 
     for n in 1:N
