@@ -38,8 +38,13 @@ function step_and_truncate_rk4(u, U, S, V, D, a, dt, r)
                  zeros(1,size(S,2))  1]
 
         # d. TRUNCATE to exactly rank r ( keep top -r singular triplets )
-        Q1, R1 = qr(U_cat, Thin=true)
-        Q2, R2 = qr(V_cat, Thin=true)
+        F1 = qr(U_cat)
+        Q1 = Matrix(F1.Q)
+        R1 = F1.R
+
+        F2 = qr(V_cat)
+        Q2 = Matrix(F2.Q)
+        R2 = F2.R 
 
         # Combine the four ( ku_k ) into u_new ( standard RK4 weights ).
         M = R1 * S_cat * R2'
