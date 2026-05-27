@@ -59,6 +59,9 @@ function step_and_truncate_rk4(u, U, S, V, D, a, dt, r)
         # and re - truncate the result to rank r
         return U_new, S_new, V_new
     end
+    function fX(u, X, D, a)
+        return -diagm(D*u) - diagm(a) * D * X
+    end
 
     ku1 = similar(u); ku2 = similar(u); ku3 = similar(u); ku4 = similar(u)
     ku1 .= -(a .* (D * u))
@@ -101,3 +104,4 @@ function step_and_truncate_rk4(u, U, S, V, D, a, dt, r)
 
     return u_new, U_new, S_new, V_new
 end
+
