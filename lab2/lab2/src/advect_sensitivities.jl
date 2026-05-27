@@ -185,6 +185,7 @@ for n in 1:Nt
                       label  = "∂u/∂a[$(J_PLOT)] (x_j = $(round(x[J_PLOT]; digits=3)))",
                       lw     = 2,
                       xlabel = "x",
+
                       ylabel = "sensitivity",
                       legend = :topright,
                       ylim   = (-0.1,0.1),
@@ -236,3 +237,16 @@ if DO_PLOT
                  color  = :purple,
                  size   = (900, 400)))
 end
+
+savefig(plot(x, gradJ;
+                 label  = "∇_a J(T)",
+                 lw     = 2,
+                 xlabel = "x_j",
+                 ylabel = "∂J/∂a[j]",
+                 title  = "Gradient of J via S' * (u(T) - u_0)",
+                 legend = :topright,
+                 color  = :purple,
+                 size   = (900, 400)), "final_sensitivity.png")
+
+
+
