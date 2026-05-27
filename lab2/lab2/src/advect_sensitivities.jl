@@ -135,6 +135,7 @@ const J_PLOT = cld(length(u0), 4)
 
 umin, umax = extrema(u0)
 pad = 0.1 * (umax - umin + eps())
+anim = Animation()
 
 for n in 1:Nt
     rhs!(k1u, k1S, u,    S,    D, a, ux, DS)
@@ -153,7 +154,6 @@ for n in 1:Nt
     if DO_PLOT && (n % PLOT_STRIDE == 0 || n == Nt)
         sj = @view S[:, J_PLOT]
 
-        # (1,1) solution u(x, t)
         plt_u = plot(x, u;
                      label  = "u(x, t)",
                      lw     = 2,
@@ -162,10 +162,8 @@ for n in 1:Nt
                      title  = "t = $(round(n*dt; digits=4))",
                      ylim   = (umin - pad, umax + pad),
                      legend = :topright)
-
-        # (1,2) singular value spectrum of S (normalized by σ₁)
+    
         sv = svdvals(S)
-        # Clamp singular values to the plot floor so log-scale never sees 0.
         sv_plot = max.(sv, 1e-16)
         plt_sv = plot(1:length(sv_plot), sv_plot ./ sv_plot[1];
                       label  = "σ_k(S) / σ_1",
@@ -179,8 +177,6 @@ for n in 1:Nt
                       xlim   = (1, length(sv_plot)),
                       legend = :topright,
                       color  = :green)
-
-        # (2,1) sensitivity at one column
         plt_sj = plot(x, sj;
                       label  = "∂u/∂a[$(J_PLOT)] (x_j = $(round(x[J_PLOT]; digits=3)))",
                       lw     = 2,
@@ -190,8 +186,6 @@ for n in 1:Nt
                       legend = :topright,
                       ylim   = (-0.1,0.1),
                       color  = :red)
-
-        # (2,2) heatmap of the sensitivity matrix S
         smax = maximum(abs, S)
         smax = smax > 0 ? smax : 1.0
         plt_S = heatmap(x, x, S;
@@ -204,6 +198,10 @@ for n in 1:Nt
 
         display(plot(plt_u, plt_sv, plt_sj, plt_S;
                      layout = (2, 2), size = (1300, 900)))
+
+        fig = plot(plt_u, plt_sv, plt_sj, plt_S;
+               layout = (2, 2), size = (1300, 900))
+        frame(anim, fig)             
     end
 end
 
@@ -237,16 +235,8 @@ if DO_PLOT
                  color  = :purple,
                  size   = (900, 400)))
 end
-
-savefig(plot(x, gradJ;
-                 label  = "∇_a J(T)",
-                 lw     = 2,
-                 xlabel = "x_j",
-                 ylabel = "∂J/∂a[j]",
-                 title  = "Gradient of J via S' * (u(T) - u_0)",
-                 legend = :topright,
-                 color  = :purple,
-                 size   = (900, 400)), "final_sensitivity.png")
+gif(anim, "sensitivity_evolution.gif", fps = 10)
+println("Saved GIF")
 
 
 
