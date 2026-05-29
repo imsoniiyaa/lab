@@ -1,0 +1,37 @@
+
+---
+
+# ✅ **.gitignore (Julia + LaTeX + VS Code)**
+
+```gitignore
+# Julia
+*.jl.cov
+*.jl.*.cov
+*.jl.mem
+*.ji
+Manifest.toml
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# LaTeX build files
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.bbl
+*.blg
+*.lof
+*.lot
+*.nav
+*.snm
+
+# Generated PDFs (optional)
+# main.pdf
+
+# OS files
+.DS_Store
