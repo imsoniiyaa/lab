@@ -14,9 +14,10 @@ function Tucker3(A::Array{Float64,3}, tol::Float64)::Tucker3
     U3 = F3.U[:, 1:r3]
 
     # Core tensor
-    G = mode_product(A, U1', 1)
-    G = mode_product(G, U2', 2)
-    G = mode_product(G, U3', 3)
+    G = mode_product(A, Matrix(U1'), 1)
+    G = mode_product(G, Matrix(U2'), 2)
+    G = mode_product(G, Matrix(U3'), 3)
+
 
     return Tucker3(G, U1, U2, U3)
 end
