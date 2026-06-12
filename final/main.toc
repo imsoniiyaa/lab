@@ -1,0 +1,9 @@
+\contentsline {section}{Introduction}{3}{section*.2}%
+\contentsline {section}{Low-Rank SVD}{3}{section*.3}%
+\contentsline {section}{Step-and-Truncate}{3}{section*.4}%
+\contentsline {section}{Taylor series}{4}{section*.5}%
+\contentsline {section}{Strategy A vs Strategy B}{4}{section*.6}%
+\contentsline {section}{Sensitivity matrix}{4}{section*.7}%
+\contentsline {section}{Cheap gradient}{5}{section*.8}%
+\contentsline {section}{Tensor Operations}{5}{section*.9}%
+\contentsline {section}{Conclusion}{5}{section*.10}%
