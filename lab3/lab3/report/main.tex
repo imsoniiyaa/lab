@@ -12,9 +12,6 @@
 \usepackage{subcaption}
 \usepackage{booktabs}
 \usepackage{hyperref}
-\usepackage{enumitem}
-\usepackage{mathtools}
-\usepackage{physics}
 \usepackage{bm}
 \usepackage{listings}
 \usepackage{xcolor}
@@ -582,65 +579,439 @@ The ranks are (24, 24, 29) which is unbalanced. This function treats the variabl
 \addcontentsline{toc}{section}{Part 4: Tucker Arithmetic and 3D PDE Setup}
 \subsection*{Exercise 5}
 \addcontentsline{toc}{subsection}{Exercise 5}
-\textbf{1}.
+\textbf{1}. Inner product of two tucker tensors
+
+\vspace{1em}
+
+Let
+\[
+A = G \times _1 U ^{(1)} \times _2 U ^{(2)} \times _3 U ^{(3)}
+\]
+and
+\[
+B = H\times _1 W ^{(1)} \times _2 W ^{(2)} \times _3 W ^{(3)}
+\]
+$G, H$ are core tensor and $U^{(n)}, W^{(n)}$ are factor matrices and $\times_n$ is mode-n product. Frobenius of those two tensors is 
+\[
+(A,B)_F = \sum_{i_1,i_2,i_3} A_{i_1,i_2,i_3} B_{i_1,i_2,i_3}
+\]
+when we apply tucker structure, since
+\[
+A_{i_1,i_2,i_3} = \sum_{j_1,j_2,j_3} G _{j_1,j_2,j_3} U ^{(1)}_{i_1,j_1} U ^{(2)} _{1_2,j_2}  U ^{(3)}_{i_3,j_3}
+\]
+\[
+B_{i_1,i_2,i_3} = \sum_{k_1,k_2,k_3} H _{k_1,k_2,k_3} W ^{(1)}_{i_1,k_1} W ^{(2)} _{1_2,k_2}  W ^{(3)}_{i_3,k_3}
+\]
+the frobenius formula definition is equal to 
+\[
+(A,B)_F=\sum_{j_1,j_2,j_3}\sum_{k_1,k_2,k_3} G _{j_1,j_2,j_3} H _{k_1,k_2,k_3} \left( U^{(1)} \right)^T W^{(1)}_{j_1,k_1} \left( U^{(2)} \right)^T W^{(2)}_{j_2,k_2} \left( U^{(3)} \right)^T W^{(3)}_{j_3,k_3}
+\]
+that is the final inner formula based on multiplication of each core tensors and factor matrices of each mode. This is effective since its computational cost is lower than dense tensor which indicates that the computational speed is faster than normal.
 
 \vspace{1.5em}
 
-\textbf{2}.
+\textbf{2}. Implement inner tucker
+
+\begin{lstlisting}
+function tucker_inner(A::Tucker3, B::Tucker3)::Float64
+    M1 = A.U1' * B.U1  
+    M2 = A.U2' * B.U2  
+    M3 = A.U3' * B.U3  
+    H_contracted = mode_product(B.G, M1', 1)
+    H_contracted = mode_product(H_contracted, M2', 2)
+    H_contracted = mode_product(H_contracted, M3', 3)
+
+    return sum(A.G .* H_contracted)
+end
+
+\end{lstlisting}
+Based on the code, it calculates the multiplication of each tensors.
+
+To verify,
+\begin{lstlisting}
+include("../src/unfold.jl")
+include("../src/mode.product.jl")
+include("../src/tucker3.jl")
+include("../src/tucker_3.jl")
+include("../src/todense.jl")
+include("../src/tucker_inner.jl")
+using LinearAlgebra
+
+A_dense = randn(10, 10, 10)
+B_dense = randn(10, 10, 10)
+
+TA = Tucker3(A_dense, 1e-14)
+TB = Tucker3(B_dense, 1e-14)
+
+ip_tucker = tucker_inner(TA, TB)
+ip_dense  = sum(todense(TA) .* todense(TB))
+ip_exact  = sum(A_dense .* B_dense)
+
+println("tucker_inner:  ", ip_tucker)
+println("dense inner:   ", ip_dense)
+println("exact inner:   ", ip_exact)
+println("error vs exact: ", abs(ip_tucker - ip_exact))
+@assert abs(ip_tucker - ip_exact) < 1e-10
+println("tucker_inner passed")
+\end{lstlisting}
+It prints out tucker\_inner:  17.17314068389137
+dense inner:   17.173140683891333
+exact inner:   17.173140683891194
+error vs exact: 1.7408297026122455e-13
+tucker\_inner passed. It means that tiny error is just floating point rounding and the structure is all correct.
 
 \vspace{1.5em}
 
-\textbf{3}.
+\textbf{3}. Implement tucker norm function
+
+\begin{lstlisting}
+function norm_tucker(A::Tucker3)::Float64
+    return sqrt(tucker_inner(A, A))
+end
+\end{lstlisting}
+
+Norm is a square root of inner tucker.
 
 \subsection*{Exercise 6}
 \addcontentsline{toc}{subsection}{Exercise 6}
-\textbf{1}.
+\textbf{1}. Show the tucker structure of A + B
+
+\vspace{1em}
+
+With ranks $r_1^A, r_2^A, r_3^A$ and $r_1^B, r_2^B, r_3^B$, the sume is all basis vectors from A and B. Therefore, the factor matrices for the sum should have all columns from both tensors.
+\[
+U^{sum,(n)} = [U^{A,(n)} U^{B, (n)}]
+\]
+which is equal to
+\[
+r_1^A + r_1^B, r_2^A +r_2^B, r_3^A+r_3^B 
+\]
+that is the new multilinear rank.
+
+\vspace{1em}
+
+The new core tensor of A+B is $U^{(n)} = [U^{A,(n)} U^{B, (n)}]$ and core tensor $G_A , G_B$ each that is a block-diagonal tensor.
+\[
+G_{sum}=\begin{bmatrix}
+G_A&0\\0&G_B
+\end{bmatrix}
+\]
+since $G_A$ multiplies the column of $U^A$ and $G_B$ multiplies the column of $U^B$ in separate blocks.
 
 \vspace{1.5em}
 
-\textbf{2}.
+\textbf{2}. Implement tucker add function
+
+\begin{lstlisting}
+function tucker_add(A::Tucker3, B::Tucker3)::Tucker3
+    U1_new = hcat(A.U1, B.U1)   
+    U2_new = hcat(A.U2, B.U2)
+    U3_new = hcat(A.U3, B.U3)  
+
+    r1A, r2A, r3A = size(A.G)
+    r1B, r2B, r3B = size(B.G)
+
+    G_new = zeros(r1A+r1B, r2A+r2B, r3A+r3B)
+    G_new[1:r1A, 1:r2A, 1:r3A] = A.G
+    G_new[r1A+1:end, r2A+1:end, r3A+1:end] = B.G
+
+    return Tucker3(G_new, U1_new, U2_new, U3_new)
+end
+\end{lstlisting}
+
+This function adds tucker A and B that use its own basis vectors. A+B concatenate columns and the cores do not mix and it does contain block-diaognal core.
 
 \vspace{1.5em}
 
-\textbf{3}.
+\textbf{3}. Implement tucker sum function
+
+\begin{lstlisting}
+function tucker_sum(terms::Vector{Tucker3}, tol::Float64)::Tucker3
+    result = tucker_round(terms[1], tol)
+    for i in 2:length(terms)
+        result = tucker_round(tucker_add(result, terms[i]), tol)
+    end
+    return result
+end
+\end{lstlisting}
+
+This function sums a
+vector of Tucker tensors and recompresses the result with tucker\_round.
 
 \vspace{1.5em}
 
-\textbf{4}.
+\textbf{4}. Verification
 
+\begin{lstlisting}
+include("../src/unfold.jl")
+include("../src/mode.product.jl")
+include("../src/tucker3.jl")
+include("../src/tucker_3.jl")
+include("../src/todense.jl")
+include("../src/tucker_inner.jl")
+include("../src/tucker_add.jl")
+include("../src/tucker_sum.jl")
+
+using Test
+using LinearAlgebra
+
+@testset "tucker_sum test" begin
+    U1 = Matrix(I, 10, 10)[:, 1:2]
+    U2 = Matrix(I, 10, 10)[:, 1:2]
+    U3 = Matrix(I, 10, 10)[:, 1:2]
+
+    Ga = ones(2,2,2)           
+    Gb = reshape(1:8, 2,2,2)      
+
+    A = Tucker3(Ga, U1, U2, U3)
+    B = Tucker3(Gb, U1, U2, U3)
+
+    dense_exact = todense(A) + todense(B)
+
+    Tsum = tucker_sum([A, B], 1e-12)
+    dense_tucker = todense(Tsum)
+
+    err = norm(dense_tucker - dense_exact) / norm(dense_exact)
+
+    @test err < 1e-10
+end
+\end{lstlisting}
+
+This test contains factor matrices and cores. We get its true sum of dense tensors and it does match with the tucker sum function with error that is less than 1e-10.
+It verifies tucker sum function works perfectly.
 
 \subsection*{Exercise 7}
 \addcontentsline{toc}{subsection}{Exercise 7}
 
-\textbf{1}.
+\textbf{1}. Show each term of $W$ is Tucker
+
+\vspace{1em}
+
+We are given that
+\[
+\mathcal{L}(W) = D_x \times_1 W + D_y \times_2 W + D_z \times_3 W
+\]
+and let
+\[
+W = G \times_1 U_1 \times_2 U_2 \times_3 U_3
+\]
+then
+\[
+D_x \times_1 W = D_x \times_1 G \times_1 U_1 \times_2 U_2 \times_3 U_3
+\]
+as mode-1 product with $D_x$, it also associates.
+\[
+D_x \times_1 W = G \times_1  D_x U_1 \times_2 U_2 \times_3 U_3
+\]
+which contains same core G and factor matrices-tucker structure. Since $D_x U_1$ has rank of $n\times r_1$ which is the rank at most $r_1$-their rank stays same.
+When we apply it for every terms,
+\[
+D_y \times_2 W = G \times_1  U_1 \times_2 D_y U_2 \times_3 U_3
+\]
+\[
+D_z \times_3 W = G \times_1  U_1 \times_2 U_2 \times_3 D_z U_3
+\]
+this is a tucker tensor with rank at most $r_1, r_2, r_3$ since they have same number of columns as the original factor matrices.
 
 \vspace{1.5em}
 
-\textbf{2}.
+\textbf{2}. Implement applyL tucker function
+
+\begin{lstlisting}
+include("tucker_sum.jl")
+
+function applyL_tucker(W::Tucker3, Dx, Dy, Dz, tol)
+    G  = W.G
+    U1 = W.U1
+    U2 = W.U2
+    U3 = W.U3
+
+    T1 = Tucker3(G, Dx * U1, U2, U3)
+    T2 = Tucker3(G, U1, Dy * U2, U3)
+    T3 = Tucker3(G, U1, U2, Dz * U3)
+
+    return tucker_sum([T1, T2, T3], tol)
+end
+
+\end{lstlisting}
+It uses tucker sum function to keep the rank under control and it uses the tucker structure directly.
 
 \vspace{1.5em}
 
-\textbf{3}.
+\textbf{3}. Step-and-Truncate solver
+
+\begin{lstlisting}
+include("../src/unfold.jl")
+include("../src/mode.product.jl")
+include("../src/tucker3.jl")
+include("../src/tucker_3.jl")
+include("../src/todense.jl")
+include("../src/tucker_inner.jl")
+include("../src/tucker_add.jl")
+include("../src/tucker_sum.jl")
+include("../src/applyL_tucker.jl")
+using LinearAlgebra
+# 7-3 step and truncate 
+n = 32
+h = 2 * pi/n
+x = range(0, 2*pi - h, length=n)
+function D_spectral(n)
+    h = 2*pi / n
+    x = range(0, 2*pi - h, length=n)
+    D = zeros(n, n)
+    for i in 1:n, j in 1:n
+        if i != j
+            D[i,j] = 0.5 * (-1)^(i-j) * cot((i-j)*pi/n)
+        end
+    end
+    return D * (2*pi / (n*h))
+end
+Dx = D_spectral(n)
+Dy = D_spectral(n)
+Dz = D_spectral(n)
+
+function taylor_step_tucker(W, Dx, Dy, Dz, dt, p, tol)
+    terms = [tucker_round(W, tol)]  # 초기 W도 truncate
+    Wk = tucker_round(W, tol)
+    for k in 1:p
+        Wk = applyL_tucker(Wk, Dx, Dy, Dz, tol)
+        scale = dt^k / factorial(k)
+        push!(terms, Tucker3(Wk.G * scale, Wk.U1, Wk.U2, Wk.U3))
+    end
+    return tucker_sum(terms, tol)
+end
+
+function run_step_and_truncate()
+    u0_dense = [sin(xi)*sin(yj)*sin(zk)
+                for xi in x, yj in x, zk in x]
+
+    dt = 0.1
+    p = 4
+    T = 2*pi
+    N_steps = round(Int, T/dt)
+    tol = dt^(p+1)
+
+    W = Tucker3(u0_dense, tol)
+    rank_history = Tuple{Int,Int,Int}[]
+    t0 = time()
+
+    for step in 1:N_steps
+        W = taylor_step_tucker(W, Dx, Dy, Dz, dt, p, tol)
+        push!(rank_history, (size(W.U1,2), size(W.U2,2), size(W.U3,2)))
+        if step % 10 == 0
+            elapsed = round(time()-t0, digits=1)
+            println("step=$step/$(N_steps), ranks=$(rank_history[end]), t=$(elapsed)s")
+        end
+    end
+
+    println("Finished $N_steps steps")
+    for (step, ranks) in enumerate(rank_history)
+        println("step=$step ranks=$ranks")
+    end
+
+    return rank_history
+end
+
+run_step_and_truncate()
+\end{lstlisting}
+
+For the 3D advection equation, I implemented the step and truncate time stepping method in tukcer format with the taylor method of order p = 4. Tolerance was chosen as $10^{-5}$ as required. The solver is extremely slow since the taylor method repeatedly applies the operator to the current tucker tensor. This is fundamentally much more expensive than RK4 step and truncate from Lab 1, which only requires four operator evaluations per step.
 
 \vspace{1.5em}
 
-\textbf{4}.
-
-\vspace{1.5em}
-
-\textbf{5}.
+\textbf{4}. Computing error and verify convergence
 
 
+\begin{lstlisting}
+include("../src/unfold.jl")
+include("../src/mode.product.jl")
+include("../src/tucker3.jl")
+include("../src/tucker_3.jl")
+include("../src/todense.jl")
+include("../src/tucker_inner.jl")
+include("../src/tucker_add.jl")
+include("../src/tucker_sum.jl")
+include("../src/applyL_tucker.jl")
+using LinearAlgebra
+using Printf
+
+function D_spectral(n)
+    h = 2*pi / n
+    D = zeros(n, n)
+    for i in 1:n, j in 1:n
+        if i != j
+            D[i,j] = 0.5 * (-1)^(i-j) * cot((i-j)*pi/n)
+        end
+    end
+    return D * (2*pi / (n*h))
+end
+
+function taylor_step_tucker(W, Dx, Dy, Dz, dt, p, tol)
+    terms = [tucker_round(W, tol)]
+    Wk = tucker_round(W, tol)
+    for k in 1:p
+        Wk = applyL_tucker(Wk, Dx, Dy, Dz, tol)
+        scale = dt^k / factorial(k)
+        push!(terms, Tucker3(Wk.G * scale, Wk.U1, Wk.U2, Wk.U3))
+    end
+    return tucker_sum(terms, tol)
+end
+
+n = 32  
+h = 2*pi / n
+x = range(0, 2*pi - h, length=n)
+Dx = D_spectral(n)
+Dy = D_spectral(n)
+Dz = D_spectral(n)
+
+u0_dense = [sin(xi)*sin(yj)*sin(zk) for xi in x, yj in x, zk in x]
+u_ref = copy(u0_dense)  # exact solution at T=2π equals u0
+
+p = 4
+prev_ratio = nothing
+
+println("Convergence test (n=$n, p=$p)")
+println("="^55)
+println("dt       | error        | dt^p        | ratio")
+println("-"^55)
+
+for dt in [0.2, 0.1, 0.05]
+    tol = dt^(p+1)
+    N_steps = round(Int, 2*pi/dt)
+
+    W = Tucker3(u0_dense, tol)
+    t0 = time()
+
+    for step in 1:N_steps
+        W = taylor_step_tucker(W, Dx, Dy, Dz, dt, p, tol)
+    end
+
+    err = h^(3/2) * norm(todense(W) - u_ref)
+    ratio = err / dt^p
+    elapsed = round(time()-t0, digits=1)
+
+    @printf("dt=%.3f | err=%.4e | dt^p=%.4e | ratio=%.4f  (%.1fs)\n",
+            dt, err, dt^p, ratio, elapsed)
+
+    global prev_ratio = ratio
+end
+\end{lstlisting}
+
+The convergence test uses a 4th order taylor step-and-truncate method. Each steps produces three tucker tensors and each taylor term adds another tensor to the sum. This indicates that the ranks grow gradually and each truncation requires an SVD of the tucker core. In conclusion, this method is computationally expensive. Since I verified the temporal convergence rate, this method successfully implements 4th order.
 % ---------------------------------------------------------
 \section*{Conclusion}
 \addcontentsline{toc}{section}
 {Conclusion}
-
-
-
-
+In this lab, I implemented tucker tensor workflow for 3D data including unfolding, mode-n products, HOSVD, step and truncate, and a full 3D PDE solver. Through the exercises, we can figure out that each component behaves as expected numerically.
 
 \vspace{2em}
+
+Part 1 shows the basic tensor operations for the accurate shapes. Part 2 implements the Tucker3 data structure that the decomposition accurately rebuilds the dense tensors with the tolerance and multi linear ranks. Part 3 describes the truncation and errors since those functions are successfully implemented without expanding to full size and its error was explained with the tolerance. It also illustrates how different functions produce balanced or not in the singular value decay experiments. In part 4, all function combined multiple tucker tensors while controlling rank growth through truncation so we applied those tools to the 3D advection. It successfully evolved the solution while keeping ranks small.
+
+\vspace{2em}
+
+Overall, this lab showed how tucker decompositions enable efficient representation, manipulation and time difference of high dimensional data. It confirms that tucker format and its practical effectiveness for large scale PDE problems.
+
 
  
 

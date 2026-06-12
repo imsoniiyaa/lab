@@ -1,0 +1,68 @@
+# ============================
+# Julia
+# ============================
+# Compiled files
+*.ji
+*.so
+*.dylib
+*.dll
+
+# Package environment
+Manifest.toml
+
+# Pluto / Jupyter checkpoints
+*.ipynb_checkpoints
+
+# VSCode Julia extension cache
+.julia/
+
+# ============================
+# LaTeX
+# ============================
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.bbl
+*.blg
+*.run.xml
+*.nav
+*.snm
+
+# Generated PDFs
+*.pdf
+
+# ============================
+# OS / Editor files
+# ============================
+.DS_Store
+Thumbs.db
+
+# VSCode
+.vscode/
+
+# ============================
+# Build / Temp
+# ============================
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# ============================
+# Plots / Figures
+# ============================
+*.png
+*.jpg
+*.jpeg
+*.svg
+
+# ============================
+# Logs
+# ============================
+*.log
