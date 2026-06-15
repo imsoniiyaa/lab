@@ -36,6 +36,7 @@ Manifest.toml
 
 # Generated PDFs
 *.pdf
+!report/main.pdf
 
 # ============================
 # OS / Editor files
