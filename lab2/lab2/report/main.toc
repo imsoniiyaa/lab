@@ -1,10 +1,10 @@
 \contentsline {section}{Introduction}{3}{section*.2}%
 \contentsline {section}{Part 1: Dense reference solver}{3}{section*.3}%
 \contentsline {subsection}{Exercise 1}{3}{section*.4}%
-\contentsline {subsection}{Exercise 2}{8}{section*.5}%
-\contentsline {section}{Part 2: Step-and-truncate propagation}{10}{section*.6}%
-\contentsline {subsection}{Exercise 3}{10}{section*.7}%
-\contentsline {section}{Part 3: Gradient from low-rank factors}{19}{section*.8}%
-\contentsline {subsection}{Exercise 4}{19}{section*.9}%
-\contentsline {subsection}{Exercise 5}{21}{section*.10}%
-\contentsline {section}{Conclusion}{23}{section*.11}%
+\contentsline {subsection}{Exercise 2}{8}{section*.6}%
+\contentsline {section}{Part 2: Step-and-truncate propagation}{10}{section*.8}%
+\contentsline {subsection}{Exercise 3}{10}{section*.9}%
+\contentsline {section}{Part 3: Gradient from low-rank factors}{20}{section*.11}%
+\contentsline {subsection}{Exercise 4}{20}{section*.12}%
+\contentsline {subsection}{Exercise 5}{22}{section*.13}%
+\contentsline {section}{Conclusion}{24}{section*.14}%

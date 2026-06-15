@@ -82,7 +82,7 @@
 \addcontentsline{toc}{section}{Introduction}
 % ---------------------------------------------------------
 
-
+In this lab, we study the sensitivity of a variable‑coefficient advection equation and compare dense computations with low‑rank approximations. We first run a full reference solver that evolves both the PDE and its sensitivity matrix, which lets us examine the singular spectrum and the true gradient of the cost functional. Then we implement a fixed‑rank step‑and‑truncate RK4 method to propagate the sensitivity matrix in factored form and track how well a limited rank can approximate the dense solution. Finally, we compare the low‑rank gradient with the dense reference to see how much accuracy is lost when the rank is restricted and how the choice of rank affects performance.
 
 
 % ---------------------------------------------------------
@@ -356,6 +356,11 @@ which serves as the reference solution for comparing with the low‑rank methods
 
 At $t = T = 10$, the normalized singular spectrum drops below $10^{-3}$ at $k = 55$, indicating that $X(T)$ is well approximated by a rank-55 matrix. This rapid decay of the singular spectrum confirms that the function $X(T)$ is highly compressible, with most of its energy concentrated in a small number of modes compared to $N = 500$.
  
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{figures/final_sensitivity.png}
+    \caption{Final sensitivity summary and singular value behavior from \texttt{advect\_sensitivities.jl}.}
+\end{figure}
 
 \subsection*{Exercise 2}
 \addcontentsline{toc}{subsection}{Exercise 2}
@@ -430,6 +435,12 @@ savefig(plt, "rank.png")
 display(plt)
 println("Saved")
 \end{verbatim}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{figures/rank.png}
+    \caption{Effective rank $r_\varepsilon(t)$ for the sensitivity matrix, produced by \texttt{plot\_stride.jl}.}
+\end{figure}
 
 To check the effective rank along the trajectory, using the time loop that records the numerical rank
 \[
@@ -967,6 +978,12 @@ end
     savefig(plt, "error_curves.png")
 end
 \end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{figures/error_curves.png}
+    \caption{Relative error versus time for fixed-rank low-rank propagation, produced by \texttt{ex3-plot.jl}.}
+\end{figure}
 
 Based on the error–vs–time plots from this exercise, we observe that for every rank which is same as given at 3-2,  the relative error does not grow significantly as time increases. Instead, the error curves remain nearly flat, forming a plateau. As the rank increases, the plateau level decreases gradually, indicating that higher ranks provide slightly better approximations. This behavior shows that the error saturates at a level determined by the discarded singular values.
 \vspace{0.8em}
