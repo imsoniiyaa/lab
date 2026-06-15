@@ -23,8 +23,8 @@ W_B, times_B, ranks_B = step_and_truncate(W0, Dx, Dy, dt, p, tol; strategy=:B)
 # Time grid
 t = (1:length(times_A)) .* dt
 
-# Plot 
-plot(
+# Plot rank vs time
+p_rank = plot(
     t, ranks_A,
     label = "Strategy A",
     xlabel = "Time",
@@ -32,16 +32,19 @@ plot(
     lw = 2,
     title = "Rank vs Time"
 )
-plot!(
+plot!(p_rank,
     t, ranks_B,
     label = "Strategy B",
     lw = 2
 )
+savefig(p_rank, "snapshots_ex8_rank.png")
+println("Saved: snapshots_ex8_rank.png")
+
 
 # Plot cumulative truncation time
 cum_A = cumsum(times_A)
 cum_B = cumsum(times_B)
-plot(
+p_cum = plot(
     t, cum_A,
     label = "Strategy A",
     xlabel = "Time",
@@ -49,8 +52,10 @@ plot(
     lw = 2,
     title = "Cumulative trunc_sum Time vs Time"
 )
-plot!(
+plot!(p_cum,
     t, cum_B,
     label = "Strategy B",
     lw = 2
 )
+savefig(p_cum, "snapshots_ex8_cumtime.png")
+println("Saved: snapshots_ex8_cumtime.png")

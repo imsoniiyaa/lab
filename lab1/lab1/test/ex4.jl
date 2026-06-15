@@ -27,6 +27,8 @@ using Plots
         plot!(p, sv[k], label="T$(k-1)")
     end
 
+    savefig(p, "snapshots_ex4_svs.png")
+    println("Saved: snapshots_ex4_svs.png")
     display(p)
 end
 
@@ -148,4 +150,16 @@ alpha = 1e-6
     global RANKS_44 = (ranks_Tk = ranks_Tk, r_eff = r_eff)
 
     @test r_eff <= maximum(ranks_Tk)
+end
+
+# If TK_NORMS was recorded, save a plot of norms
+if isdefined(Main, :TK_NORMS)
+    try
+        p_norms = plot(0:7, TK_NORMS, marker=:o, xlabel="k", ylabel="norm",
+                       title="Norms of Taylor terms (Tk)")
+        savefig(p_norms, "snapshots_ex4_norms.png")
+        println("Saved: snapshots_ex4_norms.png")
+    catch err
+        @warn "Failed to save TK_NORMS plot: $err"
+    end
 end

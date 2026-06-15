@@ -13,9 +13,11 @@
 \usepackage{subcaption}
 \usepackage{booktabs}
 \usepackage{hyperref}
-\usepackage{enumitem}
+% Load enumitem if available (some TeX installations may omit it)
+\IfFileExists{enumitem.sty}{\usepackage{enumitem}}{}
 \usepackage{mathtools}
-\usepackage{physics}
+% Load physics if available (not present in some minimal TeX installs)
+\IfFileExists{physics.sty}{\usepackage{physics}}{}
 \usepackage{bm}
 \usepackage{listings}
 \usepackage{xcolor}
@@ -452,6 +454,14 @@ Now we are computing singular values and plot them.
     display(p)
 \end{lstlisting}
 \vspace{1.5em}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{../test/snapshots_ex4_svs.png}
+\caption{Singular values of the Taylor terms $T_k$.}
+\label{fig:ex4_svs}
+\end{figure}
+\vspace{1.5em}
 \textbf{2}. Tk recording
 
 \begin{lstlisting}
@@ -459,6 +469,13 @@ sv = [ svd(Tk[k+1]).S for k in 0:7 ]
 norms = [ sqrt(sum(sv[k+1].^2)) for k in 0:7 ]
 println(norms)
 \end{lstlisting}
+\vspace{1.5em}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.6\textwidth]{../test/snapshots_ex4_norms.png}
+\caption{Norms of the Taylor terms $T_k$.}
+\label{fig:ex4_norms}
+\end{figure}
 
 To record this, let's do test.
 \begin{lstlisting}
@@ -1027,6 +1044,22 @@ plot!(
 
 \end{lstlisting}
 
+\vspace{1.5em}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{../test/snapshots_ex8_rank.png}
+\caption{Rank vs Time for strategies A and B.}
+\label{fig:ex8_rank}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{../test/snapshots_ex8_cumtime.png}
+\caption{Cumulative truncation time for strategies A and B.}
+\label{fig:ex8_cumtime}
+\end{figure}
+
 The plot shows that no matter what A is always greater than B as time gets longer. Since A takes longerf time since it truncates every terms, so insdie each taylor step, it performs p truncations. Thus, it is expensive compared to B since it uses much fewer SVDs. Overall, the gap between culmulative time of A and B keeps increasing since A does more work at every step.
 
 \vspace{1.5em}
@@ -1469,6 +1502,13 @@ p_final = plot(plots_list..., layout=(1,5), size=(1400, 300))
 savefig(p_final, "snapshots_ex10.png")
 println("Saved: snapshots_ex10.png")
 \end{lstlisting}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{../test/snapshots_ex10.png}
+\caption{Snapshots of the solution at $t = 0, \pi/4, \pi/2, \pi, 2\pi$.}
+\label{fig:snapshots_ex10}
+\end{figure}
 
 The rank starts ar 1 and rises to 55, then it decreases to 29 and elevates with 41 then it goes to 69. This shows that unlike the constant-coefficient case wher ethe rank stays near 1 due to translation preserving separability, the rotation breaks the separable structure and it increases the rank.
 

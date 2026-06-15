@@ -41,6 +41,8 @@ plots_list = []
 
 step = 0
 for target in snapshot_steps
+    # ensure assignments inside this loop refer to the top-level variables
+    global W, step
     while step < target
         local tol = dt^(p+1)
         terms = taylor_step_sbr(W, Dx, Dy, X, Y, dt, p, 0.0)
