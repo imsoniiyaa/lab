@@ -11,6 +11,8 @@
 \usepackage{float}
 \usepackage{caption}
 \usepackage{subcaption}
+% Ensure floats are not placed inside code listings
+\IfFileExists{placeins.sty}{\usepackage{placeins}}{}
 \usepackage{booktabs}
 \usepackage{hyperref}
 % Load enumitem if available (some TeX installations may omit it)
@@ -701,8 +703,9 @@ This function returns random rank 1 matrix with u1*v1 and u2*v2. Based on the ve
 \textbf{3}. How does the runtime of truncation sum scale with R? At what point does the thin-QR step dominate over the SVD step?
 
 \vspace{0.8em}
-
-The runtime of the truncation sum scales differently because two main operations contribute to the cost: the thin QR step and the small SVD step. First, the QR step requires approximately $r^2$ work.When the rank r increases, each new column must be orthogonalized against the previous r columns using inner products and subtraction. Since this process is repeated for all r columns, the total cost grows like, $ r \times r = r^2$. In contrast, the SVD step operates on a small $ 2r \times 2r$ matrix. The computational cost of performing an SVD on a square matrix of size k is $O(k^3)$, $k = 2r$ and the cost scales as $(2r)^3$ which is about $r^3$. As a result, when the rank r is small, the $r^3$ cost of the SVD is still relatively small, and the QR tends to dominate the runtime. However, as r becomes larger, the cubic growth of the SVD cost eventually overtakes the QR cost, making SVD the dominant contributor to the overall runtime.
+\vspace{1.5em}
+\IfFileExists{placeins.sty}{\FloatBarrier}{\clearpage}
+\begin{lstlisting}
 
 \section*{Part 4: Step-and-Truncate simulation}
 \addcontentsline{toc}{section}{Part 4: Step-and-Truncate simulation}
@@ -1046,14 +1049,14 @@ plot!(
 
 \vspace{1.5em}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../test/snapshots_ex8_rank.png}
 \caption{Rank vs Time for strategies A and B.}
 \label{fig:ex8_rank}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../test/snapshots_ex8_cumtime.png}
 \caption{Cumulative truncation time for strategies A and B.}
@@ -1063,9 +1066,9 @@ plot!(
 The plot shows that no matter what A is always greater than B as time gets longer. Since A takes longerf time since it truncates every terms, so insdie each taylor step, it performs p truncations. Thus, it is expensive compared to B since it uses much fewer SVDs. Overall, the gap between culmulative time of A and B keeps increasing since A does more work at every step.
 
 \vspace{1.5em}
-
 \textbf{3}. Compute error
-
+\vspace{1.5em}
+\IfFileExists{placeins.sty}{\FloatBarrier}{\clearpage}
 \begin{lstlisting}
 using LinearAlgebra
 include("LLRSVD.jl")
