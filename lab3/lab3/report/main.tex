@@ -15,6 +15,8 @@
 \usepackage{bm}
 \usepackage{listings}
 \usepackage{xcolor}
+\usepackage[utf8]{inputenc}
+
 
 
 % ---------------------------------------------------------
@@ -559,6 +561,11 @@ end
 
 The ranks are (2, 2, 2) which is symmetric balanced. Each mode unfolding sees the same structure and the singular values decay identically across modes. This is the most balanced case. 
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../figures/p1.png}
+\end{figure}
+
 \vspace{1.5em}
 
 \textbf{2}. $ 1/\sqrt{x^2+y^2+z^2+\epsilon^2} $
@@ -567,6 +574,11 @@ The ranks are (2, 2, 2) which is symmetric balanced. Each mode unfolding sees th
 
 The ranks are (14, 14, 14) which is balanced but it contains higher rank. This function is radially symmetric which means the function depends only on the distance from the origin.
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../figures/p2.png}
+\end{figure}
+
 \vspace{1.5em}
 
 \textbf{3}. $ tanh(10(x^2+y^2-z))$
@@ -574,6 +586,11 @@ The ranks are (14, 14, 14) which is balanced but it contains higher rank. This f
 \vspace{1em}
 
 The ranks are (24, 24, 29) which is unbalanced. This function treats the variables asymmetrically. $x,y$ shows quadratically and symmetrically but $z$ appears linearly and contains opposite sign. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../figures/p3.png}
+\end{figure}
 
 \section*{Part 4: Tucker Arithmetic and 3D PDE Setup}
 \addcontentsline{toc}{section}{Part 4: Tucker Arithmetic and 3D PDE Setup}
