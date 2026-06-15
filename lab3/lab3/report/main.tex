@@ -19,6 +19,7 @@
 
 
 
+
 % ---------------------------------------------------------
 % Code block style
 % ---------------------------------------------------------
@@ -488,9 +489,9 @@ end
     n = 50
 
     #1
-    xs = range(0, 2π, length=n)
-    ys = range(0, 2π, length=n)
-    zs = range(0, 2π, length=n)
+    xs = range(0, 2*pi, length=n)
+    ys = range(0, 2*pi, length=n)
+    zs = range(0, 2*pi, length=n)
 
     A1 = [sin(x+y+z) for x in xs, y in ys, z in zs]
     s1a, s2a, s3a = mode_svals(A1)
@@ -528,7 +529,7 @@ end
     r2c = sum(s2c .> 1e-6)
     r3c = sum(s3c .> 1e-6)
 
-    println("(3) tanh(10(x^2+y^2−z)) ranks = ", (r1c, r2c, r3c))
+    println("(3) tanh(10(x^2+y^2-z)) ranks = ", (r1c, r2c, r3c))
 
     #plotting singular value decay
     p1 = plot(s1a, yscale=:log10, label="mode-1", title="sin(x+y+z)")
@@ -888,7 +889,7 @@ Dy = D_spectral(n)
 Dz = D_spectral(n)
 
 function taylor_step_tucker(W, Dx, Dy, Dz, dt, p, tol)
-    terms = [tucker_round(W, tol)]  # 초기 W도 truncate
+    terms = [tucker_round(W, tol)]
     Wk = tucker_round(W, tol)
     for k in 1:p
         Wk = applyL_tucker(Wk, Dx, Dy, Dz, tol)
@@ -982,7 +983,7 @@ Dy = D_spectral(n)
 Dz = D_spectral(n)
 
 u0_dense = [sin(xi)*sin(yj)*sin(zk) for xi in x, yj in x, zk in x]
-u_ref = copy(u0_dense)  # exact solution at T=2π equals u0
+u_ref = copy(u0_dense)  # exact solution at T=2*pi equals u0
 
 p = 4
 prev_ratio = nothing
