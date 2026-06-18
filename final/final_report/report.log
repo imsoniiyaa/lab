@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.1)  15 JUN 2026 17:32
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.1)  18 JUN 2026 13:31
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -459,61 +459,483 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 26.
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1
 
-{/usr/local/texlive/2026basic/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] (./report.toc)
-\tf@toc=\write4
-\openout4 = `report.toc'.
-
-
+{/usr/local/texlive/2026basic/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] (./report.toc
 pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.28 \newpage
-              [1]
-Chapter 1.
-[2
+l.43 ... {2.4.2}Plot stride}{39}{subsection.2.4.2}
+                                                  % [1])
+\tf@toc=\write4
+\openout4 = `report.toc'.
 
-] [3] [4] [5]
-Chapter 2.
-[6
+ [2]
+Chapter 1.
+[3
 
 ]
+LaTeX Font Info:    Trying to load font information for OMS+cmr on input line 128.
+ (/usr/local/texlive/2026basic/texmf-dist/tex/latex/base/omscmr.fd
+File: omscmr.fd 2024/11/19 v2.5n Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10.95> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 128.
+
+Overfull \hbox (39.78723pt too wide) in paragraph at lines 128--129
+[][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+[4]
+LaTeX Font Info:    Trying to load font information for OML+cmr on input line 145.
+ (/usr/local/texlive/2026basic/texmf-dist/tex/latex/base/omlcmr.fd
+File: omlcmr.fd 2024/11/19 v2.5n Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OML/cmr/m/n' in size <10.95> not available
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 145.
+ [5] [6] [7] [8]
+Overfull \hbox (46.3573pt too wide) in paragraph at lines 357--358
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+[9]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 296.
+(hyperref)                removing `math shift' on input line 408.
 
-[7] [8]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `subscript' on input line 408.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 408.
+
+<../figures/snapshots_ex4_svs.png, id=582, 602.25pt x 401.5pt>
+File: ../figures/snapshots_ex4_svs.png Graphic file (type png)
+<use ../figures/snapshots_ex4_svs.png>
+Package pdftex.def Info: ../figures/snapshots_ex4_svs.png  used on input line 454.
+(pdftex.def)             Requested size: 362.37569pt x 241.59413pt.
+[10]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 459.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `subscript' on input line 459.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 459.
+
+<../figures/snapshots_ex4_norms.png, id=617, 602.25pt x 401.5pt>
+File: ../figures/snapshots_ex4_norms.png Graphic file (type png)
+<use ../figures/snapshots_ex4_norms.png>
+Package pdftex.def Info: ../figures/snapshots_ex4_norms.png  used on input line 469.
+(pdftex.def)             Requested size: 271.7835pt x 181.19406pt.
+[11 <../figures/snapshots_ex4_svs.png> <../figures/snapshots_ex4_norms.png>]
+Overfull \hbox (105.48792pt too wide) in paragraph at lines 524--527
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+[12] [13] [14]
+Overfull \hbox (105.48792pt too wide) in paragraph at lines 658--659
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+[15] [16]
+Overfull \hbox (6.93689pt too wide) in paragraph at lines 753--755
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+[17]
+Overfull \hbox (26.6471pt too wide) in paragraph at lines 802--803
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+[18] [19]
+Overfull \hbox (92.34778pt too wide) in paragraph at lines 916--917
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (13.50696pt too wide) in paragraph at lines 931--932
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+[20]
+Overfull \hbox (13.50696pt too wide) in paragraph at lines 956--957
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+[21]
+Overfull \hbox (59.49744pt too wide) in paragraph at lines 1003--1004
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (59.49744pt too wide) in paragraph at lines 1004--1006
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+<../figures/snapshots_ex8_rank.png, id=1089, 602.25pt x 401.5pt>
+File: ../figures/snapshots_ex8_rank.png Graphic file (type png)
+<use ../figures/snapshots_ex8_rank.png>
+Package pdftex.def Info: ../figures/snapshots_ex8_rank.png  used on input line 1045.
+(pdftex.def)             Requested size: 362.37569pt x 241.59413pt.
+[22]
+<../figures/snapshots_ex8_cumtime.png, id=1133, 602.25pt x 401.5pt>
+File: ../figures/snapshots_ex8_cumtime.png Graphic file (type png)
+<use ../figures/snapshots_ex8_cumtime.png>
+Package pdftex.def Info: ../figures/snapshots_ex8_cumtime.png  used on input line 1052.
+(pdftex.def)             Requested size: 362.37569pt x 241.59413pt.
+ [23 <../figures/snapshots_ex8_rank.png> <../figures/snapshots_ex8_cumtime.png>]
+Overfull \hbox (46.3573pt too wide) in paragraph at lines 1103--1104
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+[24]
+Overfull \hbox (59.49744pt too wide) in paragraph at lines 1137--1138
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (59.49744pt too wide) in paragraph at lines 1138--1140
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+[25] [26] [27]
+Overfull \hbox (79.20764pt too wide) in paragraph at lines 1281--1282
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (79.20764pt too wide) in paragraph at lines 1282--1284
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (13.50696pt too wide) in paragraph at lines 1293--1294
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+[28]
+Overfull \hbox (13.50696pt too wide) in paragraph at lines 1378--1379
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+[29] [30] [31]
+<../figures/snapshots_ex10.png, id=1520, 1405.25pt x 301.125pt>
+File: ../figures/snapshots_ex10.png Graphic file (type png)
+<use ../figures/snapshots_ex10.png>
+Package pdftex.def Info: ../figures/snapshots_ex10.png  used on input line 1498.
+(pdftex.def)             Requested size: 452.9679pt x 97.06496pt.
+ [32 <../figures/snapshots_ex10.png>]
+Chapter 2.
+[33
+
+] [34]
+Overfull \hbox (70.16269pt too wide) in paragraph at lines 1836--1836
+[]\OT1/cmtt/m/n/10.95 # parameters and let S[:, j] = \partial u/\partial a[j].  Differentiating the semi-discrete[] 
+ []
+
+[35]
+Overfull \hbox (6.92712pt too wide) in paragraph at lines 1836--1836
+[]\OT1/cmtt/m/n/10.95 # Pick dt from the advective CFL condition max(a) * dt / h \approx 1, then round[] 
+ []
+
+
+Overfull \hbox (58.66531pt too wide) in paragraph at lines 1836--1836
+[]\OT1/cmtt/m/n/10.95 S    = zeros(eltype(u0), length(u0), length(u0))   # column j is \partial u/\partial a[j][] 
+ []
+
+
+Overfull \hbox (12.67581pt too wide) in paragraph at lines 1836--1836
+[]\OT1/cmtt/m/n/10.95 # Cost functional J(u(t), u_0) = 0.5 * || u(t) - u_0 ||_{2}^2 (discrete l2 norm).[] 
+ []
+
+[36] [37]
+Overfull \hbox (144.89563pt too wide) in paragraph at lines 1836--1836
+[]                      \OT1/cmtt/m/n/10.95 label  = "\partial u/\partial a[$(J_PLOT)] (x_j = $(round(x[J_PLOT]; digits=3)))",[] 
+ []
+
+
+Overfull \hbox (6.8368pt too wide) in paragraph at lines 1836--1836
+[]\OT1/cmtt/m/n/10.95 println("RK4 with Nt = $Nt steps, dt = $dt, T = $tf, CFL = max(a)\TS1/cmtt/m/n/10.95 ·\OT1/cmtt/m/n/10.95 dt/h = $cfl.")[] 
+ []
+
+
+Overfull \hbox (23.99255pt too wide) in paragraph at lines 1836--1836
+[]\OT1/cmtt/m/n/10.95 println("\TS1/cmtt/m/n/10.95 †\OT1/cmtt/m/n/10.95 \partial u/\partial a[$(J_PLOT)](T)\TS1/cmtt/m/n/10.95 †\OT1/cmtt/m/n/10.95 _2     = ", norm(@view S[:, J_PLOT]))[] 
+ []
+
+
+Overfull \hbox (150.64432pt too wide) in paragraph at lines 1836--1836
+[]\OT1/cmtt/m/n/10.95 #     \partial J/\partial a[j] = (u(T) - u_0)^T * \partial u(T)/\partial a[j] = (u(T) - u_0)^T * S[:, j],[] 
+ []
+
+
+Overfull \hbox (121.90088pt too wide) in paragraph at lines 1836--1836
+[]\OT1/cmtt/m/n/10.95 println("argmax|\nabla_a J(T)|     = j = $(argmax(abs.(gradJ)))  (x_j = $(x[argmax(abs.(gradJ))]))")[] 
+ []
+
+[38]
+<../figures/final_sensitivity.png, id=1567, 903.375pt x 401.5pt>
+File: ../figures/final_sensitivity.png Graphic file (type png)
+<use ../figures/final_sensitivity.png>
+Package pdftex.def Info: ../figures/final_sensitivity.png  used on input line 1855.
+(pdftex.def)             Requested size: 385.02547pt x 171.12228pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 1856--1856
+[]\OT1/cmr/m/n/10.95 Figure 2.1: []Final sen-si-tiv-ity sum-mary and sin-gu-lar value be-hav-ior from
+ []
+
+[39 <../figures/final_sensitivity.png>]
+Overfull \hbox (213.87988pt too wide) in paragraph at lines 1930--1930
+[]\OT1/cmtt/m/n/10.95 Du = upwind_operators(periodic_derivative_operator; derivative_order=1, accuracy_order=4, xmin=xmin, xmax=xmax, N=N)[] 
+ []
+
+
+Overfull \hbox (1.17844pt too wide) in paragraph at lines 1930--1930
+[]\OT1/cmtt/m/n/10.95 k1u=similar(u); k2u=similar(u); k3u=similar(u); k4u=similar(u); utmp=similar(u)[] 
+ []
+
+
+Overfull \hbox (1.17844pt too wide) in paragraph at lines 1930--1930
+[]\OT1/cmtt/m/n/10.95 k1S=similar(S); k2S=similar(S); k3S=similar(S); k4S=similar(S); Stmp=similar(S)[] 
+ []
+
+[40]
+Overfull \hbox (133.39825pt too wide) in paragraph at lines 1930--1930
+[]\OT1/cmtt/m/n/10.95 plt = plot(title="Effective rank", xlabel="t", ylabel="r\varepsilon", yscale=:log10, legend=:topright)[] 
+ []
+
+
+Overfull \hbox (116.15219pt too wide) in paragraph at lines 1930--1930
+[]    \OT1/cmtt/m/n/10.95 plot!(plt, t_log, rank_log[i], label="\varepsilon=1e$(Int(log10(eps)))", lw=2, color=colors[i])[] 
+ []
+
+<../figures/rank.png, id=1577, 602.25pt x 401.5pt>
+File: ../figures/rank.png Graphic file (type png)
+<use ../figures/rank.png>
+Package pdftex.def Info: ../figures/rank.png  used on input line 1934.
+(pdftex.def)             Requested size: 385.02547pt x 256.69568pt.
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 1949.
+
+[41 <../figures/rank.png>]
+Overfull \hbox (0.36682pt too wide) in paragraph at lines 1987--1988
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+[42]
+Overfull \hbox (26.6471pt too wide) in paragraph at lines 2010--2011
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (26.6471pt too wide) in paragraph at lines 2016--2017
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (20.07703pt too wide) in paragraph at lines 2025--2026
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (118.62805pt too wide) in paragraph at lines 2029--2030
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (33.21716pt too wide) in paragraph at lines 2039--2040
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+[43]
+Overfull \hbox (98.91785pt too wide) in paragraph at lines 2102--2104
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+[44] [45] [46]
+Overfull \hbox (13.50696pt too wide) in paragraph at lines 2236--2238
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+[47] [48] [49]
+Overfull \hbox (59.49744pt too wide) in paragraph at lines 2404--2405
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+[50]
+Overfull \hbox (0.36682pt too wide) in paragraph at lines 2417--2418
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (39.78723pt too wide) in paragraph at lines 2456--2457
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+[51]
+Overfull \hbox (98.91785pt too wide) in paragraph at lines 2469--2470
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (204.03894pt too wide) in paragraph at lines 2476--2478
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (0.36682pt too wide) in paragraph at lines 2482--2483
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (59.49744pt too wide) in paragraph at lines 2483--2484
+[][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+<../figures/error_curves.png, id=2089, 602.25pt x 401.5pt>
+File: ../figures/error_curves.png Graphic file (type png)
+<use ../figures/error_curves.png>
+Package pdftex.def Info: ../figures/error_curves.png  used on input line 2493.
+(pdftex.def)             Requested size: 385.02547pt x 256.69568pt.
+[52 <../figures/error_curves.png>]
+Overfull \hbox (92.34778pt too wide) in paragraph at lines 2553--2554
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (92.34778pt too wide) in paragraph at lines 2554--2556
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+[53] [54]
+Overfull \hbox (66.0675pt too wide) in paragraph at lines 2611--2612
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+[55] [56]
+Overfull \hbox (0.36682pt too wide) in paragraph at lines 2751--2752
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+[57] [58]
 Chapter 3.
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 366.
+(hyperref)                removing `math shift' on input line 2784.
+
+[59
+
+]
+Overfull \hbox (125.19812pt too wide) in paragraph at lines 2860--2861
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+[60] [61] [62] [63]
+Overfull \hbox (0.36682pt too wide) in paragraph at lines 3081--3082
+[][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (52.0669pt too wide) in paragraph at lines 3084--3085
+[]\OT1/cmr/m/n/10.95 Based on this ver-i-fi-ca-tion, it prints out "norm of A - to-dense(Tucker3(A, 1e-12))= 3.8296095413294746e-
+ []
+
+[64]
+Overfull \hbox (20.07703pt too wide) in paragraph at lines 3159--3161
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+[65] [66]
+Overfull \hbox (20.07703pt too wide) in paragraph at lines 3267--3268
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (6.93689pt too wide) in paragraph at lines 3274--3276
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+[67]
+Overfull \hbox (0.36682pt too wide) in paragraph at lines 3291--3292
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (98.91785pt too wide) in paragraph at lines 3297--3298
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (59.49744pt too wide) in paragraph at lines 3303--3304
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+<../figures/p1.png, id=2717, 602.25pt x 401.5pt>
+File: ../figures/p1.png Graphic file (type png)
+<use ../figures/p1.png>
+Package pdftex.def Info: ../figures/p1.png  used on input line 3323.
+(pdftex.def)             Requested size: 385.02547pt x 256.69568pt.
+[68]
+<../figures/p2.png, id=2758, 602.25pt x 401.5pt>
+File: ../figures/p2.png Graphic file (type png)
+<use ../figures/p2.png>
+Package pdftex.def Info: ../figures/p2.png  used on input line 3336.
+(pdftex.def)             Requested size: 385.02547pt x 256.69568pt.
+<../figures/p3.png, id=2759, 602.25pt x 401.5pt>
+File: ../figures/p3.png Graphic file (type png)
+<use ../figures/p3.png>
+Package pdftex.def Info: ../figures/p3.png  used on input line 3349.
+(pdftex.def)             Requested size: 385.02547pt x 256.69568pt.
+ [69 <../figures/p1.png> <../figures/p2.png>] [70 <../figures/p3.png>] [71] [72]
+Overfull \hbox (13.50696pt too wide) in paragraph at lines 3562--3563
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+[73]
+Overfull \hbox (118.62805pt too wide) in paragraph at lines 3565--3566
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 380.
+(hyperref)                removing `math shift' on input line 3582.
 
-[9
 
-] [10] [11] (./report.aux)
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 3582.
+
+[74] [75]
+Overfull \hbox (0.36682pt too wide) in paragraph at lines 3680--3681
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+[76] (./report.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
 Package rerunfilecheck Info: File `report.out' has not changed.
-(rerunfilecheck)             Checksum: CBADE30D4EF9801150E0CDF6437CDC97;7243.
+(rerunfilecheck)             Checksum: 6E6084FEB5D919C7FB7C820BD9FCFB12;14203.
  ) 
 Here is how much of TeX's memory you used:
- 13273 strings out of 469006
- 200204 string characters out of 5454814
- 633813 words of memory out of 5000000
- 41744 multiletter control sequences out of 15000+600000
- 645460 words of font info for 105 fonts, out of 8000000 for 9000
+ 16074 strings out of 469006
+ 243244 string characters out of 5454814
+ 693193 words of memory out of 5000000
+ 42167 multiletter control sequences out of 15000+600000
+ 645758 words of font info for 106 fonts, out of 8000000 for 9000
  319 hyphenation exceptions out of 8191
- 75i,12n,79p,593b,564s stack positions out of 10000i,1000n,20000p,200000b,200000s
- </Users/soeunjang/Library/texlive/2026basic/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1095.600pk></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on report.pdf (12 pages, 236378 bytes).
+ 75i,12n,79p,1145b,1889s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ </Users/soeunjang/Library/texlive/2026basic/texmf-var/fonts/pk/ljfour/jknappen/ec/tctt1095.600pk> </Users/soeunjang/Library/texlive/2026basic/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1095.600pk></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on report.pdf (77 pages, 684659 bytes).
 PDF statistics:
- 352 PDF objects out of 1000 (max. 8388607)
- 298 compressed objects within 3 object streams
- 56 named destinations out of 1000 (max. 500000)
- 281 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 3599 PDF objects out of 4296 (max. 8388607)
+ 3432 compressed objects within 35 object streams
+ 2427 named destinations out of 2487 (max. 500000)
+ 616 words of extra memory for PDF output out of 10000 (max. 10000000)
 
