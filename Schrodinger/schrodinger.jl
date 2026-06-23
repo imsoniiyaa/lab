@@ -100,10 +100,13 @@ Hint: build a column vector `p = 1:Nx-1` and a row vector `q = (1:Ny-1)'`,
 then use broadcasting to form the matrix without explicit loops.
 """
 function make_eigenvalues(Nx::Int, Ny::Int)
-    # TODO ─────────────────────────────────────────────────
-    error("make_eigenvalues: not yet implemented")
-    # ──────────────────────────────────────────────────────
+    p = (1:Nx-1) .* pi          
+    q = (1:Ny-1)' .* pi
+    Γ = @. -(p^2) - (q^2)   
+    return Γ
 end
+
+    
 
 # ─────────────────────────────────────────────────────────────────────────────
 #  Exercise 2 — Crank-Nicolson time step
@@ -125,10 +128,13 @@ Algorithm (3 operations per step):
 3. Inverse 2D DST:    U_new ← idst2d(Û, Nx, Ny)   (same as dst2d)
 """
 function cn_step(U, Γ, dt::Real, Nx::Int, Ny::Int)
-    # TODO ─────────────────────────────────────────────────
-    error("cn_step: not yet implemented")
-    # ──────────────────────────────────────────────────────
+    Uhat = dst2d(U, Nx, Ny)   
+    ρ = (1 .+ im * dt/2 .* Γ) ./ (1 .- im * dt/2 .* Γ)
+    U_new = ρ .* Uhat
+    return idst2d(U_new, Nx, Ny)
 end
+
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 #  Exercise 3 — Simulation loop
@@ -153,9 +159,19 @@ Arguments
 """
 function simulate(ψ0, Γ, dt::Real, nsteps::Int, Nx::Int, Ny::Int;
                   save_every::Int = 1)
-    # TODO ─────────────────────────────────────────────────
-    error("simulate: not yet implemented")
-    # ──────────────────────────────────────────────────────
+    snapshots = [copy(ψ0)]   
+    times     = [0.0]        
+    ψ = copy(ψ0)
+
+    for step in 1:nsteps
+        ψ = cn_step(ψ, Γ, dt, Nx, Ny)   
+        if step % save_every == 0
+            push!(snapshots, copy(ψ))
+            push!(times, step * dt)
+        end
+    end
+
+    return snapshots, times
 end
 
 # ─────────────────────────────────────────────────────────────────────────────

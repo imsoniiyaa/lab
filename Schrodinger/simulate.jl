@@ -51,8 +51,11 @@ end
 
 function cn_step(U, Γ, dt::Real, Nx::Int, Ny::Int)
     Uhat = dst2d(U, Nx, Ny)
-    return idst2d(@. (1 + im*dt/2*Γ) / (1 - im*dt/2*Γ) * Uhat, Nx, Ny)
+    ρ = (1 .+ im*dt/2 .* Γ) ./ (1 .- im*dt/2 .* Γ)
+    Uhat_new = ρ .* Uhat
+    return idst2d(Uhat_new, Nx, Ny)
 end
+
 
 function simulate(ψ0, Γ, dt::Real, nsteps::Int, Nx::Int, Ny::Int;
                   save_every::Int = 1)
