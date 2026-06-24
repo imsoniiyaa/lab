@@ -100,9 +100,9 @@ Hint: build a column vector `p = 1:Nx-1` and a row vector `q = (1:Ny-1)'`,
 then use broadcasting to form the matrix without explicit loops.
 """
 function make_eigenvalues(Nx::Int, Ny::Int)
-    p = (1:Nx-1) .* pi          
-    q = (1:Ny-1)' .* pi
-    Γ = @. -(p^2) - (q^2)   
+    p = (1:Nx-1) .* π
+    q = (1:Ny-1)' .* π
+    Γ = @. -(p^2) - (q^2)
     return Γ
 end
 
@@ -185,5 +185,6 @@ Approximate the L² norm of ψ from its interior grid values:
     ‖ψ‖_{L²} ≈ sqrt( Σ_{j,k} |U[j,k]|² · h_x · h_y ),   h_x=1/Nx, h_y=1/Ny.
 """
 function l2norm(U, Nx::Int, Ny::Int)
-    return sqrt(sum(abs2.(U)) / (Nx * Ny))
+    hx, hy = 1/Nx, 1/Ny
+    return sqrt(sum(abs2.(U)) * hx * hy)
 end
