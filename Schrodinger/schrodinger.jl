@@ -129,7 +129,7 @@ Algorithm (3 operations per step):
 """
 function cn_step(U, Γ, dt::Real, Nx::Int, Ny::Int)
     Uhat = dst2d(U, Nx, Ny)   
-    ρ = (1 .+ im * dt/2 .* Γ) ./ (1 .- im * dt/2 .* Γ)
+    ρ = (1 .- im * dt/2 .* Γ) ./ (1 .+ im * dt/2 .* Γ) 
     U_new = ρ .* Uhat
     return idst2d(U_new, Nx, Ny)
 end
@@ -159,9 +159,9 @@ Arguments
 """
 function simulate(ψ0, Γ, dt::Real, nsteps::Int, Nx::Int, Ny::Int;
                   save_every::Int = 1)
-    snapshots = [copy(ψ0)]   
+    ψ = complex(copy(ψ0))       
+    snapshots = [copy(ψ)]      
     times     = [0.0]        
-    ψ = copy(ψ0)
 
     for step in 1:nsteps
         ψ = cn_step(ψ, Γ, dt, Nx, Ny)   

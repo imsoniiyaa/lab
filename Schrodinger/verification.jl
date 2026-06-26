@@ -27,7 +27,7 @@ y = (1:Ny-1) ./ Ny
 X = repeat(x, 1, Ny-1)
 Y = repeat(y', Nx-1, 1)
 
-ψ0 = @. exp(-50*((X-0.3)^2 + (Y-0.5)^2)) * exp(im*20*X)  # 파라미터 조정
+ψ0 = @. exp(-200*((X-0.3)^2 + (Y-0.5)^2)) * exp(im*40*X)
 ψ0 ./= l2norm(ψ0, Nx, Ny)
 
 dt = 5e-4
@@ -86,7 +86,7 @@ for dt_test in dts
     snaps, ts = simulate(ψ0, Γ, dt_test, n, Nx, Ny; save_every=1)
 
     θ_num = [angle(inner(ψ0, s)) for s in snaps]
-    θ_ex  = [lambda * t for t in ts]   
+    θ_ex  = [-lambda * t for t in ts]   
 
     push!(max_phase_errors, maximum(abs.(θ_num .- θ_ex)))
 end
@@ -108,5 +108,54 @@ plot!(log10.(dts), 2*log10.(dts) .+ (log10.(max_phase_errors[1]) - 2*log10.(dts[
 savefig("figures/time_step_scaling.png")
 
 
-
 # Ex6
+let
+    Nx, Ny = 64, 64
+    x = (1:Nx-1) ./ Nx
+    y = (1:Ny-1) ./ Ny
+    X = repeat(x, 1, Ny-1)
+    Y = repeat(y', Nx-1, 1)
+
+    Γ = make_eigenvalues(Nx, Ny)
+    T = 0.05
+    frobenius(A) = sqrt(sum(abs2.(A)))
+
+    function run_to_T(ψ0, Γ, dt, T, Nx, Ny)
+        n = round(Int, T / dt)
+        ψ = copy(ψ0)
+        for _ in 1:n
+            ψ = cn_step(ψ, Γ, dt, Nx, Ny)
+        end
+        return ψ
+    end
+
+    p0, q0 = 1, 2
+    lambda = -(p0*pi)^2 - (q0*pi)^2
+
+    ψ0 = complex.(sin.(p0*pi*X) .* sin.(q0*pi*Y))
+    ψ0 ./= l2norm(ψ0, Nx, Ny)
+    U_exact = ψ0 .* exp(-im * lambda * T)
+
+    dts    = [0.02, 0.01, 0.005, 0.0025]
+    errors = Float64[]
+
+    for dt_test in dts
+        U_cur = run_to_T(ψ0, Γ, dt_test, T, Nx, Ny)
+        push!(errors, frobenius(U_cur .- U_exact))
+    end
+
+    println("\nConvergence table:")
+    println("dt\t\tError\t\t\t\tRate")
+    for i in eachindex(dts)
+        rate = i > 1 ? log(errors[i]/errors[i-1]) / log(dts[i]/dts[i-1]) : NaN
+        println(dts[i], "\t\t", errors[i], "\t\t", round(rate, digits=2))
+    end
+
+    plot(log10.(dts), log10.(errors),
+         xlabel="log10(∆t)", ylabel="log10(‖U−U_exact‖_F)",
+         label="numerical error", marker=:circle, legend=:topleft)
+    plot!(log10.(dts), 2*log10.(dts) .+ (log10.(errors[1]) - 2*log10.(dts[1])),
+         linestyle=:dash, color=:red, label="O(∆t²) reference")
+    savefig("figures/convergence.png")
+
+end
