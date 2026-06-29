@@ -86,7 +86,7 @@ for dt_test in dts
     snaps, ts = simulate(ψ0, Γ, dt_test, n, Nx, Ny; save_every=1)
 
     θ_num = [angle(inner(ψ0, s)) for s in snaps]
-    θ_ex  = [-lambda * t for t in ts]   
+    θ_ex  = [lambda * t for t in ts]   
 
     push!(max_phase_errors, maximum(abs.(θ_num .- θ_ex)))
 end
@@ -110,7 +110,7 @@ savefig("figures/time_step_scaling.png")
 
 # Ex6
 let
-    Nx, Ny = 64, 64
+    Nx, Ny = 128, 128
     x = (1:Nx-1) ./ Nx
     y = (1:Ny-1) ./ Ny
     X = repeat(x, 1, Ny-1)
@@ -129,19 +129,19 @@ let
         return ψ
     end
 
-    p0, q0 = 1, 2
-    lambda = -(p0*pi)^2 - (q0*pi)^2
-
-    ψ0 = complex.(sin.(p0*pi*X) .* sin.(q0*pi*Y))
+    ψ0 = @. exp(-((X-0.3)^2 + (Y-0.3)^2)/(2*0.04^2)) * exp(im*15*pi*X + im*7*pi*Y)
     ψ0 ./= l2norm(ψ0, Nx, Ny)
-    U_exact = ψ0 .* exp(-im * lambda * T)
+
+    println("Computing U_ref")
+    U_ref = run_to_T(ψ0, Γ, 1e-5, T, Nx, Ny)
+
 
     dts    = [0.02, 0.01, 0.005, 0.0025]
     errors = Float64[]
 
     for dt_test in dts
         U_cur = run_to_T(ψ0, Γ, dt_test, T, Nx, Ny)
-        push!(errors, frobenius(U_cur .- U_exact))
+        push!(errors, frobenius(U_cur .- U_ref))
     end
 
     println("\nConvergence table:")

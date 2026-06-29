@@ -129,7 +129,7 @@ Algorithm (3 operations per step):
 """
 function cn_step(U, Γ, dt::Real, Nx::Int, Ny::Int)
     Uhat = dst2d(U, Nx, Ny)   
-    ρ = (1 .- im * dt/2 .* Γ) ./ (1 .+ im * dt/2 .* Γ) 
+    ρ = (1 .+ im * dt/2 .* Γ) ./ (1 .- im * dt/2 .* Γ)
     U_new = ρ .* Uhat
     return idst2d(U_new, Nx, Ny)
 end
