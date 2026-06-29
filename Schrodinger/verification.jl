@@ -122,7 +122,7 @@ let
 
     function run_to_T(ψ0, Γ, dt, T, Nx, Ny)
         n = round(Int, T / dt)
-        ψ = copy(ψ0)
+        ψ = complex(copy(ψ0))
         for _ in 1:n
             ψ = cn_step(ψ, Γ, dt, Nx, Ny)
         end
@@ -134,7 +134,6 @@ let
 
     println("Computing U_ref")
     U_ref = run_to_T(ψ0, Γ, 1e-5, T, Nx, Ny)
-
 
     dts    = [0.02, 0.01, 0.005, 0.0025]
     errors = Float64[]
