@@ -109,6 +109,8 @@ savefig("figures/time_step_scaling.png")
 
 
 # Ex6
+gr()
+
 let
     Nx, Ny = 128, 128
     x = (1:Nx-1) ./ Nx
@@ -128,8 +130,15 @@ let
         end
         return ψ
     end
+    function align_phase(U_cur, U_ref)
+        α = sum(conj.(U_ref) .* U_cur)
+        phase = α / abs(α)
+        return U_cur / phase
+    end
 
-    ψ0 = @. exp(-((X-0.3)^2 + (Y-0.3)^2)/(2*0.04^2)) * exp(im*15*pi*X + im*7*pi*Y)
+    # Initial Gaussian packet
+    ψ0 = @. exp(-((X-0.3)^2 + (Y-0.3)^2)/(2*0.04^2)) *
+          exp(im*15*pi*X + im*7*pi*Y)
     ψ0 ./= l2norm(ψ0, Nx, Ny)
 
     println("Computing U_ref")
@@ -140,11 +149,13 @@ let
 
     for dt_test in dts
         U_cur = run_to_T(ψ0, Γ, dt_test, T, Nx, Ny)
-        push!(errors, frobenius(U_cur .- U_ref))
+        U_aligned = align_phase(U_cur, U_ref)
+        rel_error = frobenius(abs2.(U_cur) .- abs2.(U_ref)) / frobenius(abs2.(U_ref))
+        push!(errors, rel_error)
     end
 
     println("\nConvergence table:")
-    println("dt\t\tError\t\t\t\tRate")
+    println("dt\t\tError\t\t\tRate")
     for i in eachindex(dts)
         rate = i > 1 ? log(errors[i]/errors[i-1]) / log(dts[i]/dts[i-1]) : NaN
         println(dts[i], "\t\t", errors[i], "\t\t", round(rate, digits=2))
@@ -152,9 +163,9 @@ let
 
     plot(log10.(dts), log10.(errors),
          xlabel="log10(∆t)", ylabel="log10(‖U−U_exact‖_F)",
-         label="numerical error", marker=:circle, legend=:topleft)
-    plot!(log10.(dts), 2*log10.(dts) .+ (log10.(errors[1]) - 2*log10.(dts[1])),
-         linestyle=:dash, color=:red, label="O(∆t²) reference")
+         label="error", marker=:circle, legend=:topleft)
+    plot!(log10.(dts),
+          2*log10.(dts) .+ (log10.(errors[1]) - 2*log10.(dts[1])),
+          linestyle=:dash, color=:red, label="O(∆t²) reference")
     savefig("figures/convergence.png")
-
 end
