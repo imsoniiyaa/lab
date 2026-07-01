@@ -9,6 +9,16 @@
 
 \geometry{margin=2.5cm}
 
+\lstdefinelanguage{Julia}{
+  morekeywords={abstract,break,case,catch,const,continue,do,else,elseif,end,
+    export,false,for,function,immutable,import,importall,if,in,
+    macro,module,quote,return,switch,true,try,type,typealias,using,while},
+  sensitive=true,
+  morecomment=[l]\#,
+  morestring=[b]"
+}
+\lstset{extendedchars=true, inputencoding=utf8}
+
 \lstset{
   language=Julia,
   basicstyle=\ttfamily\small,
@@ -20,6 +30,8 @@
   numbers=left,
   numberstyle=\tiny\color{gray}
 }
+
+
 
 \title{\textbf{Spectral Methods for the 2D Schr\"{o}dinger Equation}\\
 \large Exercises 1--6}
@@ -111,8 +123,8 @@ y = (1:Ny-1) ./ Ny
 
 U = [sin(pi*xi) * sin(2*pi*yi) for xi in x, yi in y]
 
-Γ = make_eigenvalues(Nx, Ny)
-LU = apply_laplacian(U, Γ, Nx, Ny)
+Gamma = make_eigenvalues(Nx, Ny)
+LU = apply_laplacian(U, Gamma, Nx, Ny)
 expected = -5 * pi^2 .* U
 
 println("Max error in eigenvalue check: ", maximum(abs.(LU .- expected)))
@@ -129,25 +141,25 @@ We run the Gaussian wave-packet simulation for 2000 steps and record the discret
 \begin{lstlisting}
 using Plots
 Nx, Ny = 64, 64
-Γ = make_eigenvalues(Nx, Ny)
+Gamma = make_eigenvalues(Nx, Ny)
 
 x = (1:Nx-1) ./ Nx
 y = (1:Ny-1) ./ Ny
 X = repeat(x, 1, Ny-1)
 Y = repeat(y', Nx-1, 1)
 
-ψ0 = @. exp(-200*((X-0.3)^2 + (Y-0.5)^2)) * exp(im*40*X)
-ψ0 ./= l2norm(ψ0, Nx, Ny)
+psi0 = @. exp(-200*((X-0.3)^2 + (Y-0.5)^2)) * exp(im*40*X)
+psi0 ./= l2norm(psi0, Nx, Ny)
 
 dt = 5e-4
 nsteps = 2000
-snapshots, times = simulate(ψ0, Γ, dt, nsteps, Nx, Ny; save_every=1)
+snapshots, times = simulate(psi0, Gamma, dt, nsteps, Nx, Ny; save_every=1)
 
 norms = [l2norm(s, Nx, Ny) for s in snapshots]
 println("Max norm drift: ", maximum(abs.(norms .- 1.0)))
 
 plot(times, norms,
-     label="‖ψ‖₂",
+     label=||psi||2",
      xlabel="time", ylabel="norm",
      ylims=(0.999, 1.001),
      legend=:bottomright)
@@ -191,23 +203,23 @@ y = (1:Ny-1) ./ Ny
 X = repeat(x, 1, Ny-1)
 Y = repeat(y', Nx-1, 1)
 
-ψ0 = complex.(sin.(p0*pi*X) .* sin.(q0*pi*Y))
-ψ0 ./= l2norm(ψ0, Nx, Ny)
+psi0 = complex.(sin.(p0*pi*X) .* sin.(q0*pi*Y))
+psi0 ./= l2norm(psi0, Nx, Ny)
 
 hx, hy = 1/Nx, 1/Ny
 inner(u, v) = hx * hy * sum(conj.(u) .* v)
 
 ##(a) 
-Γ = make_eigenvalues(Nx, Ny)
+Gamma = make_eigenvalues(Nx, Ny)
 dt = 5e-4
 nsteps = 200
-snapshots, times = simulate(ψ0, Γ, dt, nsteps, Nx, Ny; save_every=1)
+snapshots, times = simulate(psi0, Gamma, dt, nsteps, Nx, Ny; save_every=1)
 
-density_errors = [maximum(abs.(abs2.(s) .- abs2.(ψ0))) for s in snapshots]
-println("Max |ψ|² drift over time: ", maximum(density_errors))
+density_errors = [maximum(abs.(abs2.(s) .- abs2.(psi0))) for s in snapshots]
+println("Max |psi|2 drift over time: ", maximum(density_errors))
 
 plot(times, density_errors,
-     xlabel="time", ylabel="max |ψₙ|² − |ψ₀|²",
+     xlabel="time", ylabel="max |psin|2 - |psi0|2",
      label="density error", legend=:topright)
 savefig("figures/density_error.png")
 
@@ -261,12 +273,12 @@ max_phase_errors = Float64[]
 for dt_test in dts
     T = 0.01
     n = round(Int, T / dt_test)
-    snaps, ts = simulate(ψ0, Γ, dt_test, n, Nx, Ny; save_every=1)
+    snaps, ts = simulate(psi0, Gamma, dt_test, n, Nx, Ny; save_every=1)
 
-    θ_num = [angle(inner(ψ0, s)) for s in snaps]
-    θ_ex  = [lambda * t for t in ts]   
+    ceta_num = [angle(inner(psi0, s)) for s in snaps]
+    ceta_ex  = [lambda * t for t in ts]   
 
-    push!(max_phase_errors, maximum(abs.(θ_num .- θ_ex)))
+    push!(max_phase_errors, maximum(abs.(ceta_num .- ceta_ex)))
 end
 
 println("\ntime step t scaling:")
@@ -279,15 +291,15 @@ for i in eachindex(dts)
 end
 
 plot(log10.(dts), log10.(max_phase_errors),
-     xlabel="log10(∆t)", ylabel="log₁₀(max phase error)",
+     xlabel="log10(delta t)", ylabel="log10(max phase error)",
      label="numerical", marker=:circle, legend=:topleft)
 plot!(log10.(dts), 2*log10.(dts) .+ (log10.(max_phase_errors[1]) - 2*log10.(dts[1])),
-     linestyle=:dash, label="O(∆t²) reference")
+     linestyle=:dash, label="O(delta t 2) reference")
 savefig("figures/time_step_scaling.png")
 
 \end{lstlisting}
 \begin{center}
-\includegraphics[width=0.7\textwidth]{figures/figures/time_step_scaling.png}
+\includegraphics[width=0.7\textwidth]{figures/time_step_scaling.png}
 \end{center}
 
 \begin{center}
@@ -326,37 +338,37 @@ let
     X = repeat(x, 1, Ny-1)
     Y = repeat(y', Nx-1, 1)
 
-    Γ = make_eigenvalues(Nx, Ny)
+    Gamma = make_eigenvalues(Nx, Ny)
     T = 0.05
     frobenius(A) = sqrt(sum(abs2.(A)))
 
-    function run_to_T(ψ0, Γ, dt, T, Nx, Ny)
+    function run_to_T(psi0, Gamma, dt, T, Nx, Ny)
         n = round(Int, T / dt)
-        ψ = complex(copy(ψ0))
+        psi = complex(copy(psi0))
         for _ in 1:n
-            ψ = cn_step(ψ, Γ, dt, Nx, Ny)
+            psi = cn_step(psi, Gamma, dt, Nx, Ny)
         end
-        return ψ
+        return psi
     end
     function align_phase(U_cur, U_ref)
-        α = sum(conj.(U_ref) .* U_cur)
-        phase = α / abs(α)
+        alpha = sum(conj.(U_ref) .* U_cur)
+        phase = alpha / abs(alpha)
         return U_cur / phase
     end
 
     # Initial Gaussian packet
-    ψ0 = @. exp(-((X-0.3)^2 + (Y-0.3)^2)/(2*0.04^2)) *
-          exp(im*15*pi*X + im*7*pi*Y)
-    ψ0 ./= l2norm(ψ0, Nx, Ny)
+    psi0 = @. exp(-((X-0.3)^2 + (Y-0.3)^2)/(2*0.04^2)) *
+           exp(im*15*pi*X + im*7*pi*Y)
+    psi0 ./= l2norm(psi0, Nx, Ny)
 
     println("Computing U_ref")
-    U_ref = run_to_T(ψ0, Γ, 1e-5, T, Nx, Ny)
+    U_ref = run_to_T(psi0, Gamma, 1e-5, T, Nx, Ny)
 
     dts    = [0.02, 0.01, 0.005, 0.0025]
     errors = Float64[]
 
     for dt_test in dts
-        U_cur = run_to_T(ψ0, Γ, dt_test, T, Nx, Ny)
+        U_cur = run_to_T(psi0, Gamma, dt_test, T, Nx, Ny)
         U_aligned = align_phase(U_cur, U_ref)
         rel_error = frobenius(abs2.(U_cur) .- abs2.(U_ref)) / frobenius(abs2.(U_ref))
         push!(errors, rel_error)
@@ -370,11 +382,11 @@ let
     end
 
     plot(log10.(dts), log10.(errors),
-         xlabel="log10(∆t)", ylabel="log10(‖U−U_exact‖_F)",
+         xlabel="log10(delta t)", ylabel="log10(||U-U_exact||_F)",
          label="error", marker=:circle, legend=:topleft)
     plot!(log10.(dts),
           2*log10.(dts) .+ (log10.(errors[1]) - 2*log10.(dts[1])),
-          linestyle=:dash, color=:red, label="O(∆t²) reference")
+          linestyle=:dash, color=:red, label="O(delta t 2) reference")
     savefig("figures/convergence.png")
 end
 \end{lstlisting}

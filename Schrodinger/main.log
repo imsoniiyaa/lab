@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.1)  29 JUN 2026 17:12
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.1)  30 JUN 2026 14:28
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -359,41 +359,7 @@ Package graphics Info: Driver file: pdftex.def on input line 106.
 )
 \Gin@req@height=\dimen187
 \Gin@req@width=\dimen188
-) (/usr/local/texlive/2026basic/texmf-dist/tex/latex/listings/lstlang1.sty
-File: lstlang1.sty 2025/11/14 1.11b listings language file
 )
-(/usr/local/texlive/2026basic/texmf-dist/tex/latex/listings/lstlang2.sty
-File: lstlang2.sty 2025/11/14 1.11b listings language file
-)
-(/usr/local/texlive/2026basic/texmf-dist/tex/latex/listings/lstlang3.sty
-File: lstlang3.sty 2025/11/14 1.11b listings language file
-)
-
-! Package Listings Error: Couldn't load requested language.
-
-See the Listings package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.22 }
-      
-The following languages weren't loadable:
-    ,julia$
-This may cause errors in the sequel.
-
-
-! Package Listings Error: language julia undefined.
-
-See the Listings package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.22 }
-      
-The language is not loadable. Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-
 (/usr/local/texlive/2026basic/texmf-dist/tex/latex/l3backend/l3backend-pdftex.d
 ef
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
@@ -401,24 +367,24 @@ File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
 ) (./main.aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
 \c@lstlisting=\count323
 
 (/usr/local/texlive/2026basic/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
@@ -479,18 +445,18 @@ e
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-Package hyperref Info: Link coloring OFF on input line 29.
+Package hyperref Info: Link coloring OFF on input line 41.
 (./main.out) (./main.out)
 \@outlinefile=\write3
 \openout3 = `main.out'.
 
-LaTeX Font Info:    Trying to load font information for U+msa on input line 31.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 43.
 
 
 (/usr/local/texlive/2026basic/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 31.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 43.
 
 
 (/usr/local/texlive/2026basic/texmf-dist/tex/latex/amsfonts/umsb.fd
@@ -499,22 +465,50 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 
 {/usr/local/texlive/2026basic/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2
 ]
-[3] [4] (./main.aux)
+<figures/norm_conservation.png, id=110, 602.25pt x 401.5pt>
+File: figures/norm_conservation.png Graphic file (type png)
+<use figures/norm_conservation.png>
+Package pdftex.def Info: figures/norm_conservation.png  used on input line 170.
+
+(pdftex.def)             Requested size: 318.66948pt x 212.4509pt.
+
+[3 <./figures/norm_conservation.png>]
+<figures/density_error.png, id=133, 602.25pt x 401.5pt>
+File: figures/density_error.png Graphic file (type png)
+<use figures/density_error.png>
+Package pdftex.def Info: figures/density_error.png  used on input line 229.
+(pdftex.def)             Requested size: 318.66948pt x 212.4509pt.
+ [4 <./figures/density_error.png>]
+<figures/time_step_scaling.png, id=168, 602.25pt x 401.5pt>
+File: figures/time_step_scaling.png Graphic file (type png)
+<use figures/time_step_scaling.png>
+Package pdftex.def Info: figures/time_step_scaling.png  used on input line 302.
+
+(pdftex.def)             Requested size: 318.66948pt x 212.4509pt.
+
+[5] [6 <./figures/time_step_scaling.png>]
+<figures/convergence.png, id=231, 602.25pt x 401.5pt>
+File: figures/convergence.png Graphic file (type png)
+<use figures/convergence.png>
+Package pdftex.def Info: figures/convergence.png  used on input line 395.
+(pdftex.def)             Requested size: 318.66948pt x 212.4509pt.
+ [7] [8 <./figures/convergence.png>]
+(./main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 1F50A13188E8A868D063D3B49A71BD49;1522.
+(rerunfilecheck)             Checksum: 28E9D2D75409F32FDA92AC0100C5B861;1469.
  ) 
 Here is how much of TeX's memory you used:
- 12436 strings out of 469006
- 185417 string characters out of 5454814
- 955858 words of memory out of 5000000
- 40926 multiletter control sequences out of 15000+600000
+ 12754 strings out of 469006
+ 189480 string characters out of 5454814
+ 911728 words of memory out of 5000000
+ 41096 multiletter control sequences out of 15000+600000
  637720 words of font info for 78 fonts, out of 8000000 for 9000
  319 hyphenation exceptions out of 8191
- 75i,9n,79p,541b,1128s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,9n,79p,541b,1989s stack positions out of 10000i,1000n,20000p,200000b,200000s
  </Users/soeunjang/Library/texlive/2026basic/texmf-var/fonts/pk/ljfour/jknapp
 en/ec/tcrm1095.600pk></usr/local/texlive/2026basic/texmf-dist/fonts/type1/publi
 c/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/p
@@ -530,10 +524,10 @@ exmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2026basic
 asic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/20
 26basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texliv
 e/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on main.pdf (4 pages, 176182 bytes).
+Output written on main.pdf (8 pages, 268731 bytes).
 PDF statistics:
- 181 PDF objects out of 1000 (max. 8388607)
- 146 compressed objects within 2 object streams
- 59 named destinations out of 1000 (max. 500000)
- 49 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 388 PDF objects out of 1000 (max. 8388607)
+ 343 compressed objects within 4 object streams
+ 216 named destinations out of 1000 (max. 500000)
+ 69 words of extra memory for PDF output out of 10000 (max. 10000000)
 
