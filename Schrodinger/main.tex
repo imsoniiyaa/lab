@@ -410,35 +410,4 @@ $0.0025$ & 1.4491011384931658  & $1.17$ \\
 \end{tabular}
 \end{center}
 
-\subsection*{Discussion}
-
-The errors do not decrease and the expected slope of 2 is not observed.
-To understand why, we check how much the solution changes in a single step:
-\[
-  \|\psi^0\|_F = 128, \qquad
-  \|\psi^1 - \psi^0\|_F \approx 255 \quad (\Delta t = 0.02).
-\]
-The change in one step is already larger than the norm of the initial
-condition, which means $\Delta t = 0.02$ is far outside the asymptotic
-regime for this initial condition.
-
-The reason is that the Gaussian $\psi_0$ with $\sigma = 0.04$ is very
-narrow and contains high-frequency spectral modes. The highest modes have
-eigenvalues of order $\lambda_{\max} \sim -(N\pi)^2$. The Crank--Nicolson
-phase rotation per step for such a mode is
-$|\lambda_{\max}|\Delta t \gg \pi$ at $\Delta t = 0.02$, so the mode is
-severely under-resolved in time even though the scheme is
-unconditionally stable.
-
-Although Crank--Nicolson preserves the norm for any $\Delta t$, achieving
-second-order accuracy in $\|U_{\Delta t} - U_{\mathrm{ref}}\|_F$ requires
-$\Delta t$ to be in the asymptotic regime where the phase error is small.
-The prescribed $\Delta t$ values do not satisfy this condition for the
-\S5.1 initial condition.
-
-As a sanity check, second-order convergence \emph{is} confirmed in
-Exercise~5(b) using an eigenstate with a single frequency
-$\lambda \approx -128.3$, where the prescribed $\Delta t$ values satisfy
-$|\lambda|\Delta t \leq 1.28 < \pi$ and the asymptotic regime is reached.
-
 \end{document}
