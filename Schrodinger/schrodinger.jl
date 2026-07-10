@@ -170,6 +170,7 @@ function simulate(ψ0, Γ, dt::Real, nsteps::Int, Nx::Int, Ny::Int;
             push!(times, step * dt)
         end
     end
+    #only last one
 
     return snapshots, times
 end

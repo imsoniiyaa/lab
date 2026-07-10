@@ -12,7 +12,7 @@ y = (1:Ny-1) ./ Ny
 U = [sin(pi*xi) * sin(2*pi*yi) for xi in x, yi in y]
 
 Γ = make_eigenvalues(Nx, Ny)
-LU = apply_laplacian(U, Γ, Nx, Ny)
+LU = idst2d(Γ .* dst2d(U, Nx, Ny), Nx, Ny)
 expected = -5 * pi^2 .* U
 
 println("Max error in eigenvalue check: ", maximum(abs.(LU .- expected)))
@@ -109,49 +109,52 @@ savefig("figures/time_step_scaling.png")
 
 
 # Ex6
-gr()
+using LinearAlgebra
 
-let
+function exact_solution(psi0, Gamma, T, Nx, Ny)
+    psi0hat = dst2d(psi0, Nx, Ny)
+    E       = exp.(-im .* Gamma .* T)   
+    return idst2d(E .* psi0hat, Nx, Ny)
+end
+
+function ex6()
     Nx, Ny = 128, 128
     x = (1:Nx-1) ./ Nx
     y = (1:Ny-1) ./ Ny
     X = repeat(x, 1, Ny-1)
     Y = repeat(y', Nx-1, 1)
 
-    Γ = make_eigenvalues(Nx, Ny)
-    T = 0.05
-    frobenius(A) = sqrt(sum(abs2.(A)))
+    x0, y0 = 0.3, 0.3
+    σ       = 0.04
+    kx, ky  = 15*pi, 7*pi            
 
-    function run_to_T(ψ0, Γ, dt, T, Nx, Ny)
-        n = round(Int, T / dt)
-        ψ = complex(copy(ψ0))
-        for _ in 1:n
-            ψ = cn_step(ψ, Γ, dt, Nx, Ny)
-        end
-        return ψ
-    end
-    function align_phase(U_cur, U_ref)
-        α = sum(conj.(U_ref) .* U_cur)
-        phase = α / abs(α)
-        return U_cur / phase
-    end
-
-    # Initial Gaussian packet
-    ψ0 = @. exp(-((X-0.3)^2 + (Y-0.3)^2)/(2*0.04^2)) *
-          exp(im*15*pi*X + im*7*pi*Y)
+    ψ0 = @. exp(-((X-x0)^2 + (Y-y0)^2)/(2*σ^2)) * exp(im*(kx*X + ky*Y))
     ψ0 ./= l2norm(ψ0, Nx, Ny)
 
-    println("Computing U_ref")
-    U_ref = run_to_T(ψ0, Γ, 1e-5, T, Nx, Ny)
+    Γ = make_eigenvalues(Nx, Ny)
+    T = 0.05
 
     dts    = [0.02, 0.01, 0.005, 0.0025]
     errors = Float64[]
 
+    println("\n--- Running Exercise 6 Refined Convergence Test ---")
+
+    dt_ref = 1e-5
+    n_ref = round(Int, T / dt_ref)
+    println("Computing fine reference solution (this may take a few seconds)...")
+    snaps_ref, _ = simulate(ψ0, Γ, dt_ref, n_ref, Nx, Ny; save_every=n_ref)
+    U_ref = snaps_ref[end]
+
     for dt_test in dts
-        U_cur = run_to_T(ψ0, Γ, dt_test, T, Nx, Ny)
-        U_aligned = align_phase(U_cur, U_ref)
-        rel_error = frobenius(abs2.(U_cur) .- abs2.(U_ref)) / frobenius(abs2.(U_ref))
-        push!(errors, rel_error)
+        n = ceil(Int, T / dt_test)   
+        final_time = n * dt_test 
+        snaps_cur, _ = simulate(ψ0, Γ, dt_test, n, Nx, Ny; save_every=n)
+        U_cur = snaps_cur[end]
+        
+        U_ref = exact_solution(ψ0, Γ, final_time, Nx, Ny)
+        
+        err = l2norm(U_cur .- U_ref, Nx, Ny)
+        push!(errors, err)
     end
 
     println("\nConvergence table:")
@@ -162,10 +165,11 @@ let
     end
 
     plot(log10.(dts), log10.(errors),
-         xlabel="log10(∆t)", ylabel="log10(‖U−U_exact‖_F)",
-         label="error", marker=:circle, legend=:topleft)
-    plot!(log10.(dts),
-          2*log10.(dts) .+ (log10.(errors[1]) - 2*log10.(dts[1])),
-          linestyle=:dash, color=:red, label="O(∆t²) reference")
+         xlabel="log₁₀(∆t)", ylabel="log₁₀(‖U−U_ref‖)",
+         label="numerical error", marker=:circle, legend=:topleft)
+    plot!(log10.(dts), 2*log10.(dts) .+ (log10.(errors[1]) - 2*log10.(dts[1])),
+         linestyle=:dash, color=:red, label="O(∆t²) reference")
     savefig("figures/convergence.png")
 end
+
+ex6()
