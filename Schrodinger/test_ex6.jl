@@ -19,6 +19,47 @@ x0, y0  = 0.30, 0.30
 Γ = make_eigenvalues(Nx, Ny)
 T = 0.05
 
+#repeat experiment y'=ay
+a = im
+T = 0.05
+dts = [0.02, 0.01, 0.005, 0.0025]
+errors = Float64[]
+
+for dt in dts
+    nsteps = round(Int, T/dt)
+    y_num = 1.0 + 0im
+    G = (1 + a*dt/2) / (1 - a*dt/2)
+    for _ in 1:nsteps
+        y_num *= G
+    end
+    y_exact = exp(a*T)
+    push!(errors, abs(y_num - y_exact))
+end
+
+println("Convergence table:")
+println("dt\t\tError\t\tRate")
+for i in eachindex(dts)
+    if i == 1
+        println(dts[i], "\t\t", errors[i], "\t\tNaN")
+    else
+        rate = log(errors[i]/errors[i-1]) / log(dts[i]/dts[i-1])
+        println(dts[i], "\t\t", errors[i], "\t\t", round(rate, digits=2))
+    end
+end
+#plot
+
+plot(dts, errors,
+     xscale=:log10, yscale=:log10,
+     marker=:circle, label="CN error",
+     xlabel="dt", ylabel="Error",
+     title="Crank-Nicolson Convergence (y' = ay)")
+
+# add reference slope O(dt^2)
+ref = errors[1] * (dts ./ dts[1]).^2
+plot!(dts, ref, linestyle=:dash, label="O(dt^2) reference")
+
+savefig("figures/cn_error.png")
+
 #exact solution at time T
 function exact_solution(U0, Γ, T, Nx, Ny)
     U0hat = dst2d(U0, Nx, Ny)
@@ -30,14 +71,15 @@ end
 U_ref = exact_solution(ψ0, Γ, T, Nx, Ny)
 
 #dt values to test
-dts    = [0.00025, 0.000125, 0.00005, 0.000025, 0.00001]  
+dts    = [0.02, 0.01, 0.005, 0.0025]  
 errors = Float64[]
 
 #cn simulation for each dt and calculate error against exact solution
 for dt in dts
     nsteps = round(Int, T / dt)
     snaps, _ = simulate(ψ0, Γ, dt, nsteps, Nx, Ny; save_every=1)
-    push!(errors, norm(snaps[end] .- U_ref))
+    err_L2 = norm(snaps[end] .- U_ref) * sqrt(1/Nx * 1/Ny)
+    push!(errors, err_L2)
 end
 
 #print convergence table
@@ -61,10 +103,10 @@ end
 
 #plotting
 plot(log10.(dts), log10.(errors),
-     xlabel="log₁₀(∆t)", ylabel="log₁₀(‖U−U_exact‖_F)",
+     xlabel="log10(dt)", ylabel="log10(‖U-U_exact‖_L2)",
      label="numerical error", marker=:circle, legend=:topleft)
 plot!(log10.(dts), 2*log10.(dts) .+ (log10.(errors[1]) - 2*log10.(dts[1])),
-     linestyle=:dash, color=:red, label="O(∆t²) reference")
+     linestyle=:dash, color=:red, label="O(dt^2) reference")
 savefig("figures/convergence.png")
 
 #=
